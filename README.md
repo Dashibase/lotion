@@ -1,13 +1,8 @@
-<p align="center">
 <h1 align="center"><b>🧴 Lotion</b></h1>
 <p align="center">
   An open-source Notion UI built with Vue 3
 </p>
-
 <p align="center">
-  <img src="./assets/lotion.png" style="border-radius: 10px;" />
-  <br />
-  <br />
   <a href="https://twitter.com/dashibase">
     <img src="https://img.shields.io/badge/Twitter-00acee?logo=twitter&logoColor=white" />
   </a>
@@ -16,6 +11,12 @@
   </a>
   <img src="https://img.shields.io/github/license/dashibase/dashibase-insert" />
   <br />
+</p>
+
+> We will be talking about Lotion and the Notion UI during [CityJS Singapore's pre-conference meetup on 27th July](https://www.meetup.com/Singapore-JS/events/287321415/)!
+
+<p align="center">
+  <img src="./assets/lotion.png" style="border-radius: 10px;" />
 </p>
 
 ## Features
