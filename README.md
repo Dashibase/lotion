@@ -3,7 +3,7 @@
   An open-source Notion UI built with Vue 3.
 </p>
 <p align="center">
-  <a href="https://lotion.dashibase.com">Try demo</a>
+  <a href="https://lotion.dashibase.com" target="_blank">Try demo</a>
 </p>
 <p align="center">
   <a href="https://twitter.com/dashibase">
