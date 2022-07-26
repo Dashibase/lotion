@@ -45,7 +45,7 @@ npm i
 npm run dev
 ```
 
-You should see what looks like the screenshot about.
+You should see what looks like the screenshot above.
 
 **3. Contribute!**
 
