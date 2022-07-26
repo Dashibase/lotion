@@ -12,32 +12,21 @@
           :class="title ? '' : 'empty'">
           {{ title || '' }}
         </h1>
-        <!-- <h1 id="title" class="px-4 sm:px-0 focus:outline-none focus-visible:outline-none text-5xl font-bold mb-12" contenteditable="true" spellcheck="false"
-          :class="store.title ? '' : 'empty'"
-          @blur="updateTitle($event)"
-          @keydown.enter="$event.preventDefault(); appendBlock(-1);"
-          @keydown.down="moveToBlocks"
-          data-ph="Untitled">
-          {{ store.title || '' }}
-        </h1> -->
         <draggable tag="div" :list="blocks"
           v-bind="dragOptions" class="-ml-24 space-y-2 pb-4">
-          <transition-group type="transition" name="flip-list">
-            <div class="list-group-item relative group flex rounded-lg"
-              v-for="block, i in blocks" :key="i">
-              <Block :block="block"
-                :ref="el => blockElements[i] = (el as unknown as typeof Block)"
-                @deleteBlock="blocks.splice(i, 1)"
-                @newBlock="insertBlock(i)"
-                @moveToPrevChar="() => { if (blockElements[i-1]) blockElements[i-1].moveToEnd(); scrollIntoView(); }"
-                @moveToNextChar="() => { if (blockElements[i+1]) blockElements[i+1].moveToStart(); scrollIntoView(); }"
-                @moveToPrevLine="() => { if (blockElements[i-1]) blockElements[i-1].moveToLastLine(); scrollIntoView(); }"
-                @moveToNextLine="() => { if (blockElements[i+1]) blockElements[i+1].moveToFirstLine(); scrollIntoView(); }"
-                @merge="merge(i)"
-                @split="split(i)"
-                @setBlockType="type => setBlockType(i, type)"
-                />
-            </div>
+          <transition-group type="transition">
+            <Block :block="block" v-for="block, i in blocks" :key="i"
+              :ref="el => blockElements[i] = (el as unknown as typeof Block)"
+              @deleteBlock="blocks.splice(i, 1)"
+              @newBlock="insertBlock(i)"
+              @moveToPrevChar="() => { if (blockElements[i-1]) blockElements[i-1].moveToEnd(); scrollIntoView(); }"
+              @moveToNextChar="() => { if (blockElements[i+1]) blockElements[i+1].moveToStart(); scrollIntoView(); }"
+              @moveToPrevLine="() => { if (blockElements[i-1]) blockElements[i-1].moveToLastLine(); scrollIntoView(); }"
+              @moveToNextLine="() => { if (blockElements[i+1]) blockElements[i+1].moveToFirstLine(); scrollIntoView(); }"
+              @merge="merge(i)"
+              @split="split(i)"
+              @setBlockType="type => setBlockType(i, type)"
+              />
           </transition-group>
         </draggable>
       </div>
@@ -50,18 +39,9 @@
   content:attr(data-ph);
   color:#BBBBBB;
 }
-/* .flip-list-move {
-  transition: transform 0.5s;
-} */
-.no-move {
-  transition: transform 0s;
-}
 .ghost {
   opacity: 1;
   background: #F5F5F5;
-}
-.list-group {
-  min-height: 20px;
 }
 </style>
 
@@ -73,7 +53,7 @@ import Block from './Block.vue'
 
 const dragOptions = {
   animation: 150,
-  group: 'description',
+  group: 'blocks',
   disabled: false,
   ghostClass: 'ghost',
 }
@@ -139,13 +119,6 @@ onBeforeUpdate(() => {
 })
 
 const blockElements = ref<typeof Block[]>([])
-
-function test (i:number) {
-  if (blockElements.value[i-1]) {
-    blockElements.value[i-1].moveToLastLine();
-    scrollIntoView();
-  }
-}
 
 function scrollIntoView () {
   const selection = window.getSelection()

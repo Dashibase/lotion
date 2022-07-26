@@ -5,10 +5,8 @@
       'mt-12 group-first:mt-0': block.type === BlockType.H1,
       'mt-4 group-first:mt-0': block.type === BlockType.H2,
     }">
-    <div class="h-full px-2 pl-4 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
+    <div class="h-full px-2 pl-4 py-1.5 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
       :class="{
-        'py-1.5': block.type === BlockType.Text,
-        'py-1.5': block.type === BlockType.Divider,
         'py-3.5': block.type === BlockType.H1,
         'py-3': block.type === BlockType.H2,
       }">
@@ -33,8 +31,8 @@
         @keyup="keyUpHandler"
         class="py-1.5" />
       <div v-else-if="props.block.type === BlockType.Divider" ref="content"
-        class="w-full py-0 h-[1px] bg-neutral-300 mt-[1.2rem]"
-        />
+        class="w-full py-0 h-[1px] bg-neutral-300 mt-[1.2rem]">
+      </div>
       <div v-else ref="content"
         :contenteditable="![BlockType.Divider].includes(block.type)" spellcheck="false"
         @blur="block.details.value=content?.innerText"

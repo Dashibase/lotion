@@ -129,10 +129,6 @@ const options = computed(() => {
 function setBlockType (blockType:BlockType) {
   emit('clearSearch', searchTerm.value.length)
   emit('setBlockType', blockType)
-  // const selection = window.getSelection()
-  // if (selection) {
-  //   emit('clearSearch', selection.anchorOffset - searchTerm.value.length - 1, selection.anchorOffset)
-  // }
   searchTerm.value = ''
   open.value = false
 }

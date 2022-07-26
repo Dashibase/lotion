@@ -52,3 +52,12 @@ You should see what looks like the screenshot about.
 Lotion is quite limited for now but we hope it serves as a good starting point for other folks looking to build their own editors.
 
 We would love to make Lotion more extensible and welcome any suggestions or contributions! 
+
+## Acknowledgements
+
+This was made much easier with the following libraries and frameworks, thank you!
+
+- [vue-draggable-next](https://github.com/anish2690/vue-draggable-next)
+- [tiptap](https://tiptap.dev/) and [ProseMirror](https://prosemirror.net/)
+- [vue](https://vuejs.org/) and [vite](https://vitejs.dev/)
+- [TailwindCSS](https://tailwindcss.com/)

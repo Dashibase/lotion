@@ -1,3 +1,4 @@
+<!-- Adapted from https://tiptap.dev/installation/vue3 -->
 <template>
   <editor-content :editor="editor" spellcheck="false" @keyup.enter="event => event.preventDefault()" />
 </template>
@@ -30,15 +31,10 @@ const emit = defineEmits(['update:modelValue'])
 const editor = ref<any>(null)
 
 watch(props, newProps => {
-    // HTML
     const isSame = editor.value?.getHTML() === newProps.modelValue
-    // JSON
-    // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value)
-
     if (isSame) {
       return
     }
-
     editor.value?.commands.setContent(newProps.modelValue, false)
   }
 )
@@ -55,11 +51,7 @@ onMounted(() => {
     ],
     content: props.modelValue,
     onUpdate: () => {
-      // HTML
       emit('update:modelValue', editor.value?.getHTML().replaceAll(/\<br.*?\>/g, ''))
-
-      // JSON
-      // this.$emit('update:modelValue', this.editor.getJSON())
     },
   })
 })
