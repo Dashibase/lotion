@@ -34,8 +34,8 @@
 **1. Clone this repository, go to the root directory and install packages**
 
 ```bash
-git clone https://github.com/dashibase/dashibase-insert
-cd dashibase-insert
+git clone https://github.com/dashibase/lotion
+cd lotion
 npm i
 ```
 
