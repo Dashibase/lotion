@@ -2,8 +2,8 @@
   <div class="group flex w-full rounded"
     :class="{
       // Add top margin for headings
-      'mt-12 group-first:mt-0': block.type === BlockType.H1,
-      'mt-4 group-first:mt-0': block.type === BlockType.H2,
+      'pt-12 first:pt-0': block.type === BlockType.H1,
+      'pt-4 first:pt-0': block.type === BlockType.H2,
     }">
     <div class="h-full px-2 pl-4 py-1.5 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
       :class="{
@@ -25,30 +25,10 @@
     </div>
     <div class="w-full relative" :class="{ 'px-4 sm:px-0': block.type !== BlockType.Divider }">
       <!-- Actual content -->
-      <editor v-if="props.block.type === BlockType.Text" ref="content"
-        v-model="props.block.details.value"
+      <component :is="BlockComponents[props.block.type]" ref="content"
+        :block="block"
         @keydown.capture="keyDownHandler"
-        @keyup="keyUpHandler"
-        class="py-1.5" />
-      <div v-else-if="props.block.type === BlockType.Divider" ref="content"
-        class="w-full py-0 h-[1px] bg-neutral-300 mt-[1.2rem]">
-      </div>
-      <div v-else ref="content"
-        :contenteditable="![BlockType.Divider].includes(block.type)" spellcheck="false"
-        @blur="block.details.value=content?.innerText"
-        @keydown="keyDownHandler"
-        @keyup="keyUpHandler"
-        class="focus:outline-none focus-visible:outline-none w-full"
-        :class="{
-          'py-1.5': block.type === BlockType.Text,
-          'py-1.5 text-4xl font-semibold': block.type === BlockType.H1,
-          'py-1.5 text-3xl font-medium': block.type === BlockType.H2,
-          'py-0 h-[1px] bg-neutral-300 mt-[1.2rem]': block.type === BlockType.Divider,
-        }"
-        :block-type="block.type"
-        :data-ph="placeholder">
-        {{ [BlockType.Divider].includes(block.type) ? '' : block.details.value }}
-      </div>
+        @keyup="keyUpHandler" />
     </div>
   </div>
 </template>
@@ -63,9 +43,8 @@
 
 <script setup lang="ts">
 import { ref, computed, PropType } from 'vue'
-import { Block, BlockType } from '@/utils/types'
+import { Block, BlockType, BlockComponents } from '@/utils/types'
 import BlockMenu from './BlockMenu.vue'
-import Editor from './elements/Editor.vue'
 import Tooltip from './elements/Tooltip.vue'
 
 const props = defineProps({
@@ -105,7 +84,8 @@ function getFirstChild () {
       return (content.value as any).$el.firstChild.firstChild.firstChild
     }
   } else {
-    return (content.value as any).firstChild || content.value
+    if ((content.value as any).$el) return (content.value as any).$el.firstChild || content.value.$el
+    else return (content.value as any).firstChild || content.value
   }
 }
 
@@ -117,7 +97,8 @@ function getLastChild () {
       return (content.value as any).$el.firstChild.firstChild.firstChild
     }
   } else {
-    return (content.value as any).firstChild || content.value
+    if ((content.value as any).$el) return (content.value as any).$el.firstChild || content.value.$el
+    else return (content.value as any).firstChild || content.value
   }
 }
 
@@ -125,13 +106,13 @@ function getInnerContent () {
   if (props.block.type === BlockType.Text) {
     return (content.value as any).$el.firstChild.firstChild.firstChild
   } else {
-    return (content.value as any).firstChild || content.value
+    return (content.value as any).$el.firstChild || content.value.$el
   }
 }
 
 function getTextContent () {
   const innerContent = getInnerContent()
-  if (innerContent) return innerContent.parentElement.textContent
+  if (innerContent) return innerContent.parentElement ? innerContent.parentElement.textContent : innerContent.textContent
 }
 
 function getHtmlContent () {
@@ -191,7 +172,7 @@ function isContentBlock () {
   return [BlockType.Text, BlockType.H1, BlockType.H2].includes(props.block.type)
 }
 
-const content = ref<HTMLDivElement|null>(null)
+const content = ref<any>(null)
 const menu = ref<typeof BlockMenu|null>(null)
 
 function atFirstChar () {
@@ -370,7 +351,7 @@ function getCaretPosWithoutTags () {
         selectedNode = selectedNode?.parentElement as Node
         tag = (selectedNode as HTMLElement).tagName.toLowerCase()
       }
-      for (const node of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
+      for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
         if (node === selectedNode) {
           offsetNode = node
           break
