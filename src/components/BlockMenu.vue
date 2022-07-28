@@ -87,7 +87,9 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
   } else if (event.key === 'Escape') {
     // Escape closes menu
     open.value = false
-  } else if (event.key.match(/^([a-zA-Z]|[0-9])$/)) {
+    searchTerm.value = ''
+    active.value = 0
+  } else if (event.key.match(/^([a-zA-Z]|[0-9]| )$/)) {
     // Alphanumeric searches menu
     searchTerm.value += event.key
     active.value = 0
