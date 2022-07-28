@@ -58,6 +58,8 @@ document.addEventListener('click', (event:Event) => {
   if (!open.value) return
   if (!(container.value && container.value.contains(event.target as Node))) {
     open.value = false
+    searchTerm.value = ''
+    active.value = 0
   }
 })
 
