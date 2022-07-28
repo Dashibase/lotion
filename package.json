@@ -11,6 +11,7 @@
   "dependencies": {
     "@tiptap/starter-kit": "^2.0.0-beta.191",
     "@tiptap/vue-3": "^2.0.0-beta.96",
+    "fuse.js": "^6.6.2",
     "oh-vue-icons": "^1.0.0-rc3",
     "vue": "^3.2.37",
     "vue-draggable-next": "^2.1.1"
