@@ -452,11 +452,12 @@ function clearSearch (searchTermLength: number) {
   const startIdx = pos - searchTermLength - 1
   const endIdx = pos
   setTimeout(() => {
-    try {
-      props.block.details.value = (content.value as any).innerText.substring(0, startIdx) + (content.value as any).innerText.substring(endIdx);
-      (content.value as any).innerText = (content.value as any).innerText.substring(0, startIdx) + (content.value as any).innerText.substring(endIdx)
-    } catch {
-
+    const originalText = (content.value as any).$el.innerText
+    props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
+    if (props.block.type === BlockType.Text) {
+      props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
+    } else {
+      (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
     }
     setTimeout(() => setCaretPos(startIdx))
   })

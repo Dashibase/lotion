@@ -25,7 +25,7 @@
             <div v-for="option, i in options.filter(option => option.type === 'Turn into')"
               class="px-2 py-1 rounded flex items-center gap-2"
               :class="[active === (i + options.filter(option => option.type !== 'Turn into').length) ? 'bg-neutral-100' : '']"
-              @click="option.callback"
+              @mousedown="option.callback"
               @mouseover="active = (i + options.filter(option => option.type !== 'Turn into').length)">
               <v-icon v-if="option.icon"
                 :name="option.icon" class="w-5 h-5"/>
@@ -90,10 +90,12 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
   } else if (event.key.match(/^([a-zA-Z]|[0-9])$/)) {
     // Alphanumeric searches menu
     searchTerm.value += event.key
+    active.value = 0
   } else if (event.key === 'Backspace') {
     // Backspace closes menu if searchTerm is empty
     if (searchTerm.value.length === 0) open.value = false
     else searchTerm.value = searchTerm.value.slice(0, -1)
+    active.value = 0
   }
 })
 
