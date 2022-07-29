@@ -9,6 +9,7 @@
       :class="{
         'py-3.5': block.type === BlockType.H1,
         'py-3': block.type === BlockType.H2,
+        'py-2.5': block.type === BlockType.H3,
       }">
       <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to delete block</span>">
         <v-icon name="hi-trash" @click="emit('deleteBlock')"
