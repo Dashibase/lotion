@@ -93,7 +93,13 @@ function setBlockType (blockIdx: number, type: BlockType) {
   if (type === BlockType.Divider) {
     props.page.blocks[blockIdx].details = {}
     insertBlock(blockIdx)
-  } else setTimeout(() => blockElements.value[blockIdx].moveToEnd())
+  } else setTimeout(() => {
+    if (blockElements.value[blockIdx].content.onSet) {
+      blockElements.value[blockIdx].content.onSet()
+    } else {
+      blockElements.value[blockIdx].moveToEnd()
+    }
+  })
 }
 
 function merge (blockIdx: number) {

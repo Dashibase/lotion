@@ -447,6 +447,7 @@ function clearSearch (searchTermLength: number) {
   const endIdx = pos
   setTimeout(() => {
     const originalText = (content.value as any).$el.innerText
+    if (!originalText) return
     props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
     if (props.block.type === BlockType.Text) {
       props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`

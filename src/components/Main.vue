@@ -15,6 +15,15 @@ import { BlockType } from '@/utils/types'
 import Markdown from './Markdown.vue'
 import Lotion from './Lotion.vue'
 
+// Example of how to add a custom block
+// A "Moisturize" option should appear in the menu
+import { FaPumpSoap } from "oh-vue-icons/icons"
+import { addIcons } from "oh-vue-icons"
+import { registerBlock } from '@/utils/utils'
+import ExampleBlock from './custom/ExampleBlock.vue'
+addIcons(FaPumpSoap)
+registerBlock('LOTION', 'Moisturize', ExampleBlock, 'fa-pump-soap')
+
 const page = ref({
   name: '🧴 Lotion',
   blocks:[{

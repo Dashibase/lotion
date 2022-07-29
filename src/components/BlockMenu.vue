@@ -24,7 +24,7 @@
             <div v-for="option, i in options.filter(option => option.type === 'Turn into')"
               class="px-2 py-1 rounded flex items-center gap-2"
               :class="[active === (i + options.filter(option => option.type !== 'Turn into').length) ? 'bg-neutral-100' : '']"
-              @mousedown="option.callback"
+              @mousedown="setBlockType(option.blockType)"
               @mouseover="active = (i + options.filter(option => option.type !== 'Turn into').length)">
               <v-icon v-if="option.icon"
                 :name="option.icon" class="w-5 h-5"/>
@@ -38,10 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, PropType } from 'vue'
+import { ref, computed } from 'vue'
 import Fuse from 'fuse.js'
 import { BlockType } from '@/utils/types'
 import Tooltip from './elements/Tooltip.vue'
+import { turnIntoOptions } from '@/utils/menu'
 
 const emit = defineEmits([
   'setBlockType',
@@ -84,7 +85,7 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
   } else if (event.key === 'Enter') {
     // Enter selects menu option
     event.preventDefault()
-    const callback = options.value[active.value].callback
+    const callback = () => setBlockType(options.value[active.value].blockType)
     if (callback) callback()
   } else if (event.key === 'Escape') {
     // Escape closes menu
@@ -103,50 +104,17 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
   }
 })
 
-/*
-Menu options
-*/
-
-const defaultOptions = [
-  {
-    type: 'Turn into',
-    icon: 'bi-text-left',
-    label: 'Text',
-    callback: () => setBlockType(BlockType.Text),
-  }, {
-    type: 'Turn into',
-    icon: 'bi-type-h1',
-    label: 'Heading 1',
-    callback: () => setBlockType(BlockType.H1),
-  }, {
-    type: 'Turn into',
-    icon: 'bi-type-h2',
-    label: 'Heading 2',
-    callback: () => setBlockType(BlockType.H2),
-  }, {
-    type: 'Turn into',
-    icon: 'bi-type-h3',
-    label: 'Heading 3',
-    callback: () => setBlockType(BlockType.H3),
-  }, {
-    type: 'Turn into',
-    icon: 'bi-hr',
-    label: 'Divider',
-    callback: () => setBlockType(BlockType.Divider),
-  },
-]
-
-const fuzzySearch = new Fuse(defaultOptions, {
+const fuzzySearch = new Fuse(turnIntoOptions, {
   keys: ['label']
 })
 
 const options = computed(() => {
   return searchTerm.value === ''
-    ? defaultOptions
+    ? turnIntoOptions
     : fuzzySearch.search(searchTerm.value).map(result => result.item)
 })
 
-function setBlockType (blockType:BlockType) {
+function setBlockType (blockType:BlockType|string) {
   emit('clearSearch', searchTerm.value.length)
   emit('setBlockType', blockType)
   searchTerm.value = ''
