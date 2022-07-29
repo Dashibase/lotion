@@ -9,8 +9,7 @@
     </div>
     <div v-show="open">
       <div ref="menu"
-        class="w-[10rem] lg:w-[12rem] xl:w-[16rem] absolute z-10 shadow-block rounded py-1 text-neutral-700 text-sm right-full bg-white max-h-[24rem] overflow-auto focus-visible:outline-none top-0"
-        ><!-- :style="{transform: `translateX(${translateX}px)`}"> -->
+        class="w-[10rem] lg:w-[12rem] xl:w-[16rem] absolute z-10 shadow-block rounded py-1 text-neutral-700 text-sm right-full bg-white max-h-[24rem] overflow-auto focus-visible:outline-none top-0">
         <div class="text-left divide-y">
           <!-- Search term -->
           <div v-if="searchTerm" class="px-2 py-2 flex gap-2 w-full">
@@ -19,7 +18,7 @@
               {{ searchTerm }}
             </div>
           </div>
-          <!-- Turn into (another read-only block like Text, Heading or Divider) -->
+          <!-- Turn into another block like Text, Heading or Divider -->
           <div class="px-2 py-2" v-if="options.filter(option => option.type === 'Turn into').length">
             <div class="px-2 pb-2 font-semibold uppercase text-xs text-neutral-400">Turn into</div>
             <div v-for="option, i in options.filter(option => option.type === 'Turn into')"

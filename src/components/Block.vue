@@ -43,7 +43,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, computed, PropType } from 'vue'
+import { ref, PropType } from 'vue'
 import { Block, BlockType, BlockComponents } from '@/utils/types'
 import BlockMenu from './BlockMenu.vue'
 import Tooltip from './elements/Tooltip.vue'
@@ -69,13 +69,6 @@ const emit = defineEmits([
   'split',
   'setBlockType',
 ])
-
-const placeholder = computed(() => {
-  if (props.block.type === BlockType.H1) return 'Heading 1'
-  else if (props.block.type === BlockType.H2) return 'Heading 2'
-  else if (props.block.type === BlockType.Divider) return ''
-  else return 'Type \'/\' for commands'
-})
 
 function getFirstChild () {
   if (props.block.type === BlockType.Text) {
