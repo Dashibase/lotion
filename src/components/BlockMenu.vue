@@ -40,6 +40,7 @@
 
 <script setup lang="ts">
 import { ref, computed, PropType } from 'vue'
+import Fuse from 'fuse.js'
 import { BlockType } from '@/utils/types'
 import Tooltip from './elements/Tooltip.vue'
 
@@ -57,6 +58,8 @@ document.addEventListener('click', (event:Event) => {
   if (!open.value) return
   if (!(container.value && container.value.contains(event.target as Node))) {
     open.value = false
+    searchTerm.value = ''
+    active.value = 0
   }
 })
 
@@ -87,7 +90,9 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
   } else if (event.key === 'Escape') {
     // Escape closes menu
     open.value = false
-  } else if (event.key.match(/^([a-zA-Z]|[0-9])$/)) {
+    searchTerm.value = ''
+    active.value = 0
+  } else if (event.key.match(/^([a-zA-Z]|[0-9]| )$/)) {
     // Alphanumeric searches menu
     searchTerm.value += event.key
     active.value = 0
@@ -102,35 +107,44 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
 /*
 Menu options
 */
+
+const defaultOptions = [
+  {
+    type: 'Turn into',
+    icon: 'bi-text-left',
+    label: 'Text',
+    callback: () => setBlockType(BlockType.Text),
+  }, {
+    type: 'Turn into',
+    icon: 'bi-type-h1',
+    label: 'Heading 1',
+    callback: () => setBlockType(BlockType.H1),
+  }, {
+    type: 'Turn into',
+    icon: 'bi-type-h2',
+    label: 'Heading 2',
+    callback: () => setBlockType(BlockType.H2),
+  }, {
+    type: 'Turn into',
+    icon: 'bi-type-h3',
+    label: 'Heading 3',
+    callback: () => setBlockType(BlockType.H3),
+  }, {
+    type: 'Turn into',
+    icon: 'bi-hr',
+    label: 'Divider',
+    callback: () => setBlockType(BlockType.Divider),
+  },
+]
+
+const fuzzySearch = new Fuse(defaultOptions, {
+  keys: ['label']
+})
+
 const options = computed(() => {
-  return [
-    {
-      type: 'Turn into',
-      icon: 'bi-text-left',
-      label: 'Text',
-      callback: () => setBlockType(BlockType.Text),
-    }, {
-      type: 'Turn into',
-      icon: 'bi-type-h1',
-      label: 'Heading 1',
-      callback: () => setBlockType(BlockType.H1),
-    }, {
-      type: 'Turn into',
-      icon: 'bi-type-h2',
-      label: 'Heading 2',
-      callback: () => setBlockType(BlockType.H2),
-    }, {
-      type: 'Turn into',
-      icon: 'bi-type-h3',
-      label: 'Heading 3',
-      callback: () => setBlockType(BlockType.H3),
-    }, {
-      type: 'Turn into',
-      icon: 'bi-hr',
-      label: 'Divider',
-      callback: () => setBlockType(BlockType.Divider),
-    },
-  ].filter(option => option.label.toLowerCase().startsWith(searchTerm.value))
+  return searchTerm.value === ''
+    ? defaultOptions
+    : fuzzySearch.search(searchTerm.value).map(result => result.item)
 })
 
 function setBlockType (blockType:BlockType) {
