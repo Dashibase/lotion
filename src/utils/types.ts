@@ -1,7 +1,6 @@
 import TextBlock from '@/components/blocks/TextBlock.vue'
 import DividerBlock from '@/components/blocks/DividerBlock.vue'
-import H1Block from '@/components/blocks/H1Block.vue'
-import H2Block from '@/components/blocks/H2Block.vue'
+import HeadingBlock from '@/components/blocks/HeadingBlock.vue'
 
 export interface Block {
   type: BlockType;
@@ -12,6 +11,7 @@ export enum BlockType {
   Text = 'TEXT',
   H1 = 'H1',
   H2 = 'H2',
+  H3 = 'H3',
   Divider = 'DIVIDER',
 }
 
@@ -21,7 +21,8 @@ export interface Details {
 
 export const BlockComponents = {
   [BlockType.Text]: TextBlock, 
-  [BlockType.H1]: H1Block,
-  [BlockType.H2]: H2Block,
+  [BlockType.H1]: HeadingBlock,
+  [BlockType.H2]: HeadingBlock,
+  [BlockType.H3]: HeadingBlock,
   [BlockType.Divider]: DividerBlock,
 }

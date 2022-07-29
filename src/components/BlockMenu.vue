@@ -126,6 +126,11 @@ const defaultOptions = [
     callback: () => setBlockType(BlockType.H2),
   }, {
     type: 'Turn into',
+    icon: 'bi-type-h3',
+    label: 'Heading 3',
+    callback: () => setBlockType(BlockType.H3),
+  }, {
+    type: 'Turn into',
     icon: 'bi-hr',
     label: 'Divider',
     callback: () => setBlockType(BlockType.Divider),

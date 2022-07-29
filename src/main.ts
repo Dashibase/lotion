@@ -8,6 +8,7 @@ import {
   BiTextLeft,
   BiTypeH1,
   BiTypeH2,
+  BiTypeH3,
   BiHr,
 } from "oh-vue-icons/icons"
 import App from './App.vue'
@@ -21,6 +22,7 @@ addIcons(
   BiTextLeft,
   BiTypeH1,
   BiTypeH2,
+  BiTypeH3,
   BiHr,
 )
 
