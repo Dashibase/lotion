@@ -434,6 +434,9 @@ function parseMarkdown (event:KeyboardEvent) {
 }
 
 function clearSearch (searchTermLength: number) {
+  if (searchTermLength <= 1)
+    return
+
   const pos = getCaretPosWithoutTags().pos
   const startIdx = pos - searchTermLength - 1
   const endIdx = pos
