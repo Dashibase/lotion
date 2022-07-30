@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, PropType } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Fuse from 'fuse.js'
 import { BlockType } from '@/utils/types'
 import Tooltip from './elements/Tooltip.vue'
@@ -49,8 +49,15 @@ const emit = defineEmits([
 ])
 
 const open = ref(false)
+const openedWithSlash = ref(false)
 const container = ref<HTMLDivElement|null>(null)
 const menu = ref<HTMLDivElement|null>(null)
+
+watch(open, isOpen => {
+  if (!isOpen) {
+    openedWithSlash.value = false
+  }
+})
 
 document.addEventListener('click', (event:Event) => {
   // Close menu on click outside of menu
@@ -147,7 +154,7 @@ const options = computed(() => {
 })
 
 function setBlockType (blockType:BlockType) {
-  if (searchTerm.value.length > 0)
+  if (searchTerm.value.length > 0 || openedWithSlash.value)
     emit('clearSearch', searchTerm.value.length)
   emit('setBlockType', blockType)
 
@@ -157,5 +164,6 @@ function setBlockType (blockType:BlockType) {
 
 defineExpose({
   open,
+  openedWithSlash,
 })
 </script>
