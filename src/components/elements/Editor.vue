@@ -3,12 +3,6 @@
   <editor-content :editor="editor" spellcheck="false" @keyup.enter="event => event.preventDefault()" />
 </template>
 
-<style>
-[contenteditable='true']:focus-visible {
-  outline: 2px solid transparent;
-}
-</style>
-
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Document from '@tiptap/extension-document'

@@ -3,8 +3,17 @@
 @tailwind components;
 @tailwind utilities;
 
+[contenteditable='true']:focus-visible {
+  outline: 2px solid transparent;
+}
+
 [contenteditable]:empty:after {
   content: attr(data-ph);
   color: rgba(0, 0, 0, 0.2);
   cursor: text;
+}
+
+.ghost {
+  opacity: 1;
+  background: #F5F5F5;
 }

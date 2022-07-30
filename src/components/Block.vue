@@ -34,14 +34,6 @@
   </div>
 </template>
 
-<style>
-/* Placeholder text styling */
-[contenteditable='true']:empty:focus:before{
-  content:attr(data-ph);
-  color:#BBBBBB;
-}
-</style>
-
 <script setup lang="ts">
 import { ref, PropType } from 'vue'
 import { Block, BlockType, BlockComponents } from '@/utils/types'
@@ -163,7 +155,7 @@ function keyUpHandler (event:KeyboardEvent) {
 }
 
 function isContentBlock () {
-  return [BlockType.Text, BlockType.H1, BlockType.H2].includes(props.block.type)
+  return [BlockType.Text, BlockType.H1, BlockType.H2, BlockType.H3].includes(props.block.type)
 }
 
 const content = ref<any>(null)
@@ -432,16 +424,25 @@ function parseMarkdown (event:KeyboardEvent) {
       emit('setBlockType', BlockType.H2);
       (content.value as any).innerText = ''
       props.block.details.value = ''
+    } else if (textContent.match(/^###\s$/) && event.key === ' ') {
+      emit('setBlockType', BlockType.H3);
+      (content.value as any).innerText = ''
+      props.block.details.value = ''
     } else if (textContent.match(/^---$/)) {
       emit('setBlockType', BlockType.Divider);
       (content.value as any).innerText = ''
     } else if (event.key === '/') {
-      if (menu.value) menu.value.open = true
+      if (menu.value && !menu.value.open) {
+        menu.value.open = true
+        menu.value.openedWithSlash = true
+      }
     }
   }
 }
 
 function clearSearch (searchTermLength: number) {
+  if (searchTermLength <= 1)
+    return
   const pos = getCaretPosWithoutTags().pos
   const startIdx = pos - searchTermLength - 1
   const endIdx = pos

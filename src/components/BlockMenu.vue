@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Fuse from 'fuse.js'
 import { BlockType } from '@/utils/types'
 import Tooltip from './elements/Tooltip.vue'
@@ -50,8 +50,15 @@ const emit = defineEmits([
 ])
 
 const open = ref(false)
+const openedWithSlash = ref(false)
 const container = ref<HTMLDivElement|null>(null)
 const menu = ref<HTMLDivElement|null>(null)
+
+watch(open, isOpen => {
+  if (!isOpen) {
+    openedWithSlash.value = false
+  }
+})
 
 document.addEventListener('click', (event:Event) => {
   // Close menu on click outside of menu
@@ -114,14 +121,17 @@ const options = computed(() => {
     : fuzzySearch.search(searchTerm.value).map(result => result.item)
 })
 
-function setBlockType (blockType:BlockType|string) {
-  emit('clearSearch', searchTerm.value.length)
+function setBlockType (blockType:BlockType) {
+  if (searchTerm.value.length > 0 || openedWithSlash.value)
+    emit('clearSearch', searchTerm.value.length)
   emit('setBlockType', blockType)
+
   searchTerm.value = ''
   open.value = false
 }
 
 defineExpose({
   open,
+  openedWithSlash,
 })
 </script>

@@ -25,17 +25,6 @@
   </div>
 </template>
 
-<style>
-#title.empty[contenteditable='true']:before{
-  content:attr(data-ph);
-  color:#BBBBBB;
-}
-.ghost {
-  opacity: 1;
-  background: #F5F5F5;
-}
-</style>
-
 <script setup lang="ts">
 import { ref, onBeforeUpdate, PropType } from 'vue'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
