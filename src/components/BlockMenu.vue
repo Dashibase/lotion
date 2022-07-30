@@ -147,8 +147,10 @@ const options = computed(() => {
 })
 
 function setBlockType (blockType:BlockType) {
-  emit('clearSearch', searchTerm.value.length)
+  if (searchTerm.value.length > 0)
+    emit('clearSearch', searchTerm.value.length)
   emit('setBlockType', blockType)
+
   searchTerm.value = ''
   open.value = false
 }
