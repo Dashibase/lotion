@@ -34,14 +34,6 @@
   </div>
 </template>
 
-<style>
-/* Placeholder text styling */
-[contenteditable='true']:empty:focus:before{
-  content:attr(data-ph);
-  color:#BBBBBB;
-}
-</style>
-
 <script setup lang="ts">
 import { ref, PropType } from 'vue'
 import { Block, BlockType, BlockComponents } from '@/utils/types'
