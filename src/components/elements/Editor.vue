@@ -43,6 +43,11 @@ onMounted(() => {
       Italic,
       History,
     ],
+    editorProps: { 
+      handleDrop : (view, event, slice, moved) => {
+       return true;
+      }
+    },
     content: props.modelValue,
     onUpdate: () => {
       emit('update:modelValue', editor.value?.getHTML().replaceAll(/\<br.*?\>/g, ''))
