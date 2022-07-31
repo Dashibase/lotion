@@ -44,9 +44,8 @@ onMounted(() => {
       History,
     ],
     editorProps: { 
-      handleDrop : (view, event, slice, moved) => {
-       return true;
-      }
+      // Removing default behaviour for drop event
+      handleDrop : () => true,
     },
     content: props.modelValue,
     onUpdate: () => {
