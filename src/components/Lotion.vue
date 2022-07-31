@@ -5,7 +5,7 @@
       :class="props.page.name ? '' : 'empty'">
       {{ props.page.name || '' }}
     </h1>
-    <draggable tag="div" :list="props.page.blocks"
+    <draggable tag="div" :list="props.page.blocks"  handle=".handle"
       v-bind="dragOptions" class="-ml-24 space-y-2 pb-4">
       <transition-group type="transition">
         <BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i"

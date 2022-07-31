@@ -20,6 +20,7 @@
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
       </Tooltip>
       <BlockMenu ref="menu"
+        class="handle"
         @setBlockType="type => emit('setBlockType', type)"
         @clearSearch="clearSearch"
         />
@@ -29,7 +30,7 @@
       <component :is="BlockComponents[props.block.type]" ref="content"
         :block="block"
         @keydown.capture="keyDownHandler"
-        @keyup="keyUpHandler" />
+        @keyup="parseMarkdown" />
     </div>
   </div>
 </template>
@@ -148,10 +149,6 @@ function keyDownHandler (event:KeyboardEvent) {
       emit('split')
     }
   }
-}
-
-function keyUpHandler (event:KeyboardEvent) {
-  parseMarkdown(event)
 }
 
 function isContentBlock () {
@@ -415,27 +412,33 @@ function getEndCoordinates () {
 
 function parseMarkdown (event:KeyboardEvent) {
   const textContent = getTextContent()
-  if (textContent) {
-    if (textContent.match(/^#\s$/) && event.key === ' ') {
-      emit('setBlockType', BlockType.H1);
-      (content.value as any).innerText = ''
-      props.block.details.value = ''
-    } else if (textContent.match(/^##\s$/) && event.key === ' ') {
-      emit('setBlockType', BlockType.H2);
-      (content.value as any).innerText = ''
-      props.block.details.value = ''
-    } else if (textContent.match(/^###\s$/) && event.key === ' ') {
-      emit('setBlockType', BlockType.H3);
-      (content.value as any).innerText = ''
-      props.block.details.value = ''
-    } else if (textContent.match(/^---$/)) {
-      emit('setBlockType', BlockType.Divider);
-      (content.value as any).innerText = ''
-    } else if (event.key === '/') {
-      if (menu.value && !menu.value.open) {
-        menu.value.open = true
-        menu.value.openedWithSlash = true
-      }
+  if(!textContent) return
+
+  const headingRegexpMap = {
+    [BlockType.H1]: /^#\s(.*)$/,
+    [BlockType.H2]: /^##\s(.*)$/,
+    [BlockType.H3]: /^###\s(.*)$/,
+  }
+  const handleHeadingContent = (blockType: keyof typeof headingRegexpMap) => {
+    emit('setBlockType', blockType)
+    const newContent = textContent.replace(headingRegexpMap[blockType], '$1')
+    ;(content.value as any).innerText = newContent
+    props.block.details.value = newContent
+  }
+
+  if (textContent.match(headingRegexpMap[BlockType.H1]) && event.key === ' ') {
+    handleHeadingContent(BlockType.H1)
+  } else if (textContent.match(headingRegexpMap[BlockType.H2]) && event.key === ' ') {
+    handleHeadingContent(BlockType.H2)
+  } else if (textContent.match(headingRegexpMap[BlockType.H3]) && event.key === ' ') {
+    handleHeadingContent(BlockType.H3)
+  } else if (textContent.match(/^---$/)) {
+    emit('setBlockType', BlockType.Divider);
+    (content.value as any).innerText = ''
+  } else if (event.key === '/') {
+    if (menu.value && !menu.value.open) {
+      menu.value.open = true
+      menu.value.openedWithSlash = true
     }
   }
 }

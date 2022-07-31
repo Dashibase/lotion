@@ -43,6 +43,10 @@ onMounted(() => {
       Italic,
       History,
     ],
+    editorProps: { 
+      // Removing default behaviour for drop event
+      handleDrop : () => true,
+    },
     content: props.modelValue,
     onUpdate: () => {
       emit('update:modelValue', editor.value?.getHTML().replaceAll(/\<br.*?\>/g, ''))
