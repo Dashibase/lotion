@@ -20,6 +20,7 @@
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
       </Tooltip>
       <BlockMenu ref="menu"
+        class="handle"
         @setBlockType="type => emit('setBlockType', type)"
         @clearSearch="clearSearch"
         />
