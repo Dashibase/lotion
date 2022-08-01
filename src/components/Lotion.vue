@@ -93,6 +93,8 @@ function setBlockType (blockIdx: number, type: BlockType) {
 }
 
 function merge (blockIdx: number) {
+  if (blockIdx === 0) return
+
   if (props.page.blocks[blockIdx-1].type === BlockType.Text) {
     const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
     props.page.blocks[blockIdx-1].details.value = ('<p>' + (props.page.blocks[blockIdx-1] as any).details.value.replace('<p>', '').replace('</p>', '') + blockElements.value[blockIdx].getHtmlContent().replace('<p>', '').replace('</p>', '') + '</p>').replace('</strong><strong>', '').replace('</em><em>', '')
