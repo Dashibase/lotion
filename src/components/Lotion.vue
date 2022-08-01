@@ -93,7 +93,7 @@ function merge (blockIdx: number) {
       blockElements.value[blockIdx-1].setCaretPos(prevBlockContentLength)
       props.page.blocks.splice(blockIdx, 1)
     })
-  } else if ([BlockType.H1, BlockType.H2].includes(props.page.blocks[blockIdx-1].type)) {
+  } else if ([BlockType.H1, BlockType.H2, BlockType.H3].includes(props.page.blocks[blockIdx-1].type)) {
     const prevBlockContentLength = (props.page.blocks[blockIdx-1] as any).details.value.length
     props.page.blocks[blockIdx-1].details.value += blockElements.value[blockIdx].getTextContent()
     setTimeout(() => {
