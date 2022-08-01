@@ -93,7 +93,7 @@ function getInnerContent () {
   if (props.block.type === BlockType.Text) {
     return (content.value as any).$el.firstChild.firstChild.firstChild
   } else {
-    return (content.value as any).$el.firstChild;
+    return (content.value as any).$el.firstChild
   }
 }
 
@@ -105,7 +105,7 @@ function getTextContent () {
 function getHtmlContent () {
   const innerContent = getInnerContent()
   if (innerContent) return innerContent.parentElement.innerHTML
-  else return ""
+  else return ''
 }
 
 function keyDownHandler (event:KeyboardEvent) {
