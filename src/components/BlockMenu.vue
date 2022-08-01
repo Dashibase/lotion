@@ -80,10 +80,12 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
     // Support up/down navigation with keyboard
     if (event.key === 'ArrowUp') {
       // Move up
-      active.value = Math.max(active.value - 1, 0)
+      // Scroll to bottom of menu if at top
+      active.value= active.value - 1 >= 0 ? active.value - 1 : options.value.length - 1
     } else {
-      //  Move down
-      active.value = Math.min(active.value + 1, options.value.length - 1)
+      // Move down
+      // Scroll to top of menu if at bottom
+      active.value= active.value + 1 <= options.value.length - 1 ? active.value + 1 : 0
     }
   } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     // Left/right will exit menu
