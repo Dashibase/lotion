@@ -305,6 +305,11 @@ function getCaretPos () {
         selectedNode = selectedNode?.parentElement as Node
         tag = (selectedNode as HTMLElement).tagName.toLowerCase()
       }
+      // Edge case when character length is 1
+      if (selectedNode !== null && selectedNode.childNodes.length > 0) {
+        if (selectedNode.childNodes[0].textContent && selectedNode.childNodes[0].textContent.length <= 1)
+          selectedNode = selectedNode.childNodes[0];
+      }
       for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
         if (node === selectedNode) {
           offsetNode = node
@@ -333,6 +338,11 @@ function getCaretPosWithoutTags () {
       if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
         selectedNode = selectedNode?.parentElement as Node
         tag = (selectedNode as HTMLElement).tagName.toLowerCase()
+      }
+      // Edge case when character length is 1
+      if (selectedNode !== null && selectedNode.childNodes.length > 0) {
+        if (selectedNode.childNodes[0].textContent && selectedNode.childNodes[0].textContent.length <= 1)
+          selectedNode = selectedNode.childNodes[0];
       }
       for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
         if (node === selectedNode) {
