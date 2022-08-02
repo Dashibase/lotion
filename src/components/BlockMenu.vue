@@ -143,6 +143,12 @@ const defaultOptions = [
     label: 'Divider',
     callback: () => setBlockType(BlockType.Divider),
   },
+  {
+    type: 'Turn into',
+    icon: 'bi-quote',
+    label: 'Quote',
+    callback: () => setBlockType(BlockType.Quote),
+  },
 ]
 
 const fuzzySearch = new Fuse(defaultOptions, {
