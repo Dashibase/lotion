@@ -1,6 +1,6 @@
 <template>
   <div ref="container" as="div" class="relative w-max h-max">
-    <div @click="open = !open">
+    <div @click="open = !open" class="handle">
       <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Drag</span> to move<br/><span class='text-white'>Click</span> to open menu</span>">
         <v-icon name="md-dragindicator" @mouseup="$event.stopPropagation()"
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0"
@@ -81,10 +81,12 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
     // Support up/down navigation with keyboard
     if (event.key === 'ArrowUp') {
       // Move up
-      active.value = Math.max(active.value - 1, 0)
+      // Scroll to bottom of menu if at top
+      active.value = active.value - 1 >= 0 ? active.value - 1 : options.value.length - 1
     } else {
-      //  Move down
-      active.value = Math.min(active.value + 1, options.value.length - 1)
+      // Move down
+      // Scroll to top of menu if at bottom
+      active.value = active.value + 1 <= options.value.length - 1 ? active.value + 1 : 0
     }
   } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     // Left/right will exit menu
@@ -123,7 +125,7 @@ const options = computed(() => {
 
 function setBlockType (blockType:BlockType) {
   if (searchTerm.value.length > 0 || openedWithSlash.value)
-    emit('clearSearch', searchTerm.value.length)
+    emit('clearSearch', searchTerm.value.length, openedWithSlash.value)
   emit('setBlockType', blockType)
 
   searchTerm.value = ''

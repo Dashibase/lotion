@@ -1,7 +1,7 @@
 <template>
   <div ref="content"
     contenteditable spellcheck="false"
-    @blur="props.block.details.value=content?.innerText"
+    @input="props.block.details.value=content?.innerText"
     class="focus:outline-none focus-visible:outline-none w-full py-1.5 font-semibold"
     :class="headingConfig[props.block.type]?.class"
     :block-type="props.block.type"
@@ -30,6 +30,7 @@ const headingConfig = {
   // Irrelevant BlockTypes
   [BlockType.Text]: null,
   [BlockType.Divider]: null,
+  [BlockType.Quote]: null,
 }
 
 const props = defineProps({

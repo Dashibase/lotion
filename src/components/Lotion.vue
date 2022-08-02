@@ -10,7 +10,7 @@
       <transition-group type="transition">
         <BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i"
           :ref="el => blockElements[i] = (el as unknown as typeof Block)"
-          @deleteBlock="props.page.blocks.splice(i, 1)"
+          @deleteBlock="deleteBlock(i)"
           @newBlock="insertBlock(i)"
           @moveToPrevChar="() => { if (blockElements[i-1]) blockElements[i-1].moveToEnd(); scrollIntoView(); }"
           @moveToNextChar="() => { if (blockElements[i+1]) blockElements[i+1].moveToStart(); scrollIntoView(); }"
@@ -45,7 +45,6 @@ const dragOptions = {
   ghostClass: 'ghost',
 }
 
-
 onBeforeUpdate(() => {
   blockElements.value = []
 })
@@ -74,6 +73,14 @@ function insertBlock (blockIdx: number) {
   })
 }
 
+function deleteBlock (blockIdx: number) {
+  props.page.blocks.splice(blockIdx, 1)
+  // Always keep at least one block
+  if (props.page.blocks.length === 0) {
+    insertBlock(0)
+  }
+}
+
 function setBlockType (blockIdx: number, type: BlockType) {
   if (props.page.blocks[blockIdx].type === BlockType.Text) {
     props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
@@ -92,14 +99,16 @@ function setBlockType (blockIdx: number, type: BlockType) {
 }
 
 function merge (blockIdx: number) {
+  if (blockIdx === 0) return
+
   if (props.page.blocks[blockIdx-1].type === BlockType.Text) {
     const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
-    props.page.blocks[blockIdx-1].details.value = ('<p>' + (props.page.blocks[blockIdx-1] as any).details.value.replace('<p>', '').replace('</p>', '') + blockElements.value[blockIdx].getHtmlContent().replace('<p>', '').replace('</p>', '') + '</p>').replace('</strong><strong>', '').replace('</em><em>', '')
+    props.page.blocks[blockIdx-1].details.value = ('<p>' + (props.page.blocks[blockIdx-1] as any).details.value.replace('<p>', '').replace('</p>', '') + blockElements.value[blockIdx].getHtmlContent().replaceAll(/\<br.*?\>/g, '').replace('<p>', '').replace('</p>', '') + '</p>').replace('</strong><strong>', '').replace('</em><em>', '')
     setTimeout(() => {
       blockElements.value[blockIdx-1].setCaretPos(prevBlockContentLength)
       props.page.blocks.splice(blockIdx, 1)
     })
-  } else if ([BlockType.H1, BlockType.H2].includes(props.page.blocks[blockIdx-1].type)) {
+  } else if ([BlockType.H1, BlockType.H2, BlockType.H3].includes(props.page.blocks[blockIdx-1].type)) {
     const prevBlockContentLength = (props.page.blocks[blockIdx-1] as any).details.value.length
     props.page.blocks[blockIdx-1].details.value += blockElements.value[blockIdx].getTextContent()
     setTimeout(() => {
