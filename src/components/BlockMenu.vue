@@ -157,7 +157,7 @@ const options = computed(() => {
 
 function setBlockType (blockType:BlockType) {
   if (searchTerm.value.length > 0 || openedWithSlash.value)
-    emit('clearSearch', searchTerm.value.length)
+    emit('clearSearch', searchTerm.value.length, openedWithSlash.value)
   emit('setBlockType', blockType)
 
   searchTerm.value = ''

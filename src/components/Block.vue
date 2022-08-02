@@ -443,8 +443,9 @@ function parseMarkdown (event:KeyboardEvent) {
   }
 }
 
-function clearSearch (searchTermLength: number) {
-  if (searchTermLength < 1)
+function clearSearch (searchTermLength: number, openedWithSlash: boolean = false) {
+  // If openedWithSlash, searchTermLength = 0 but we still need to clear
+  if (searchTermLength < 1 && !openedWithSlash) 
     return
   const pos = getCaretPosWithoutTags().pos
   const startIdx = pos - searchTermLength - 1
