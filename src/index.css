@@ -3,8 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
-[contenteditable='true']:focus-visible {
-  outline: 2px solid transparent;
+[contenteditable='true']:focus-visible,
+[contenteditable='true']:focus {
+  outline: none;
 }
 
 [contenteditable]:empty:after {

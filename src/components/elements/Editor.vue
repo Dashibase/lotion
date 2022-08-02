@@ -49,9 +49,3 @@ watch(() => props.modelValue, value => {
   editor.value?.commands.setContent(value, false)
 })
 </script>
-
-<style scoped>
-:deep([contenteditable="true"]:focus) {
-  outline: none;
-}
-</style>
