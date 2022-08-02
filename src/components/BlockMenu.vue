@@ -1,6 +1,6 @@
 <template>
   <div ref="container" as="div" class="relative w-max h-max">
-    <div @click="open = !open">
+    <div @click="open = !open" class="handle">
       <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Drag</span> to move<br/><span class='text-white'>Click</span> to open menu</span>">
         <v-icon name="md-dragindicator" @mouseup="$event.stopPropagation()"
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0"
@@ -163,7 +163,7 @@ const options = computed(() => {
 
 function setBlockType (blockType:BlockType) {
   if (searchTerm.value.length > 0 || openedWithSlash.value)
-    emit('clearSearch', searchTerm.value.length)
+    emit('clearSearch', searchTerm.value.length, openedWithSlash.value)
   emit('setBlockType', blockType)
 
   searchTerm.value = ''

@@ -20,7 +20,6 @@
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
       </Tooltip>
       <BlockMenu ref="menu"
-        class="handle"
         @setBlockType="type => emit('setBlockType', type)"
         @clearSearch="clearSearch"
         />
@@ -306,6 +305,11 @@ function getCaretPos () {
         selectedNode = selectedNode?.parentElement as Node
         tag = (selectedNode as HTMLElement).tagName.toLowerCase()
       }
+      // Edge case when character length is 1
+      if (selectedNode !== null && selectedNode.childNodes.length > 0) {
+        if (selectedNode.childNodes[0].textContent && selectedNode.childNodes[0].textContent.length <= 1)
+          selectedNode = selectedNode.childNodes[0];
+      }
       for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
         if (node === selectedNode) {
           offsetNode = node
@@ -334,6 +338,11 @@ function getCaretPosWithoutTags () {
       if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
         selectedNode = selectedNode?.parentElement as Node
         tag = (selectedNode as HTMLElement).tagName.toLowerCase()
+      }
+      // Edge case when character length is 1
+      if (selectedNode !== null && selectedNode.childNodes.length > 0) {
+        if (selectedNode.childNodes[0].textContent && selectedNode.childNodes[0].textContent.length <= 1)
+          selectedNode = selectedNode.childNodes[0];
       }
       for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
         if (node === selectedNode) {
@@ -444,8 +453,9 @@ function parseMarkdown (event:KeyboardEvent) {
   }
 }
 
-function clearSearch (searchTermLength: number) {
-  if (searchTermLength <= 1)
+function clearSearch (searchTermLength: number, openedWithSlash: boolean = false) {
+  // If openedWithSlash, searchTermLength = 0 but we still need to clear
+  if (searchTermLength < 1 && !openedWithSlash) 
     return
   const pos = getCaretPosWithoutTags().pos
   const startIdx = pos - searchTermLength - 1
