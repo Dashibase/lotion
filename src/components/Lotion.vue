@@ -84,7 +84,20 @@ function deleteBlock (blockIdx: number) {
 }
 
 function setBlockType (blockIdx: number, type: BlockType) {
+<<<<<<< HEAD
   props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
+=======
+  if (props.page.blocks[blockIdx].type === BlockType.Text || props.page.blocks[blockIdx].type === BlockType.Quote) {
+    // If target is text or quote, keep <strong> and <em> tags, and add <p> tags
+    if (type === BlockType.Text || type === BlockType.Quote) {
+      props.page.blocks[blockIdx].details.value = '<p>' + blockElements.value[blockIdx].getHtmlContent() + '</p>'
+    }
+    else { 
+      // If not, we can just get the text content
+      props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
+    }
+  }
+>>>>>>> Keep <strong> and <em> tags upon block type change with no search term
   props.page.blocks[blockIdx].type = type
   if (type === BlockType.Divider) {
     props.page.blocks[blockIdx].details = {}
