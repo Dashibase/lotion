@@ -464,16 +464,44 @@ function clearSearch (searchTermLength: number, openedWithSlash: boolean = false
   // If openedWithSlash, searchTermLength = 0 but we still need to clear
   if (searchTermLength < 1 && !openedWithSlash) 
     return
-  const pos = getCaretPosWithoutTags().pos
-  const startIdx = pos - searchTermLength - 1
-  const endIdx = pos
+
+  let pos:number, startIdx:number, endIdx:number;
+  let finalText:string, finalTextWithTags:string = '';
+  // Refers to current block type before change
+  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+    pos = getCaretPos().pos;
+    // Subtract extra 3 for <p> in front
+    startIdx = pos - searchTermLength - 4;
+    endIdx = pos - 3;
+    const htmlContent = getHtmlContent();
+    finalTextWithTags = htmlContent.substring(0, startIdx) + htmlContent.substring(endIdx);
+  } 
+  pos = getCaretPosWithoutTags().pos
+  startIdx = pos - searchTermLength - 1
+  endIdx = pos
+  const textContent = getTextContent()
+  finalText = textContent.substring(0, startIdx) + textContent.substring(endIdx)
+
   setTimeout(() => {
+<<<<<<< HEAD
     const originalText = (content.value as any).$el.innerText
     props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
     if (isTextBlock(props.block.type)) {
       props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
+=======
+    // Refers to block type after change
+    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+      if (finalTextWithTags !== '') {
+        props.block.details.value = '<p>' + finalTextWithTags + '</p>'
+      } else {
+        // We came from a heading type, so use plain text
+        props.block.details.value = '<p>' + finalText + '</p>'
+      }
+    } else if (props.block.type === BlockType.Divider) {
+      props.block.details = {}
+>>>>>>> Modified clearSearch behaviour to allow <strong> and <em> tags to persist after block type change
     } else {
-      (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
+      props.block.details.value = finalText
     }
     setTimeout(() => setCaretPos(startIdx))
   })
