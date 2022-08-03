@@ -437,12 +437,22 @@ function parseMarkdown (event:KeyboardEvent) {
     props.block.details.value = newContent
   }
 
+  const handleQuoteContent = () => {
+    emit('setBlockType', BlockType.Quote)
+    const newContent = textContent.replace(/^>\s(.*)$/, '$1')
+    ;(content.value as any).innerText = newContent
+    props.block.details.value = newContent
+  }
+
+
   if (textContent.match(headingRegexpMap[BlockType.H1]) && event.key === ' ') {
     handleHeadingContent(BlockType.H1)
   } else if (textContent.match(headingRegexpMap[BlockType.H2]) && event.key === ' ') {
     handleHeadingContent(BlockType.H2)
   } else if (textContent.match(headingRegexpMap[BlockType.H3]) && event.key === ' ') {
     handleHeadingContent(BlockType.H3)
+  } else if (textContent.match(/^>\s(.*)$/) && event.key === ' ') {
+    handleQuoteContent()
   } else if (textContent.match(/^---$/)) {
     emit('setBlockType', BlockType.Divider);
     (content.value as any).innerText = ''
