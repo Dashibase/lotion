@@ -17,9 +17,9 @@ const props = defineProps({
 
 const markdownBlocks = computed(() => {
   return props.page.blocks.map(block => {
-    if (block.type === BlockType.Text) {
+    if (block.type === BlockType.Text || block.type === BlockType.Quote) {
       return {
-        type: BlockType.Text,
+        type: block.type,
         details: {
           value: (block.details.value as string)
             .replaceAll('<p>', '')

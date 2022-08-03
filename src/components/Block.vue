@@ -63,7 +63,7 @@ const emit = defineEmits([
 ])
 
 function getFirstChild () {
-  if (props.block.type === BlockType.Text) {
+  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
     if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
       return (content.value as any).$el.firstChild.firstChild.firstChild
     } else {
@@ -76,7 +76,7 @@ function getFirstChild () {
 }
 
 function getLastChild () {
-  if (props.block.type === BlockType.Text) {
+  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
     if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
       return (content.value as any).$el.firstChild.firstChild.lastChild
     } else {
@@ -89,7 +89,7 @@ function getLastChild () {
 }
 
 function getInnerContent () {
-  if (props.block.type === BlockType.Text) {
+  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
     return (content.value as any).$el.firstChild.firstChild.firstChild
   } else {
     return (content.value as any).$el.firstChild
@@ -152,7 +152,7 @@ function keyDownHandler (event:KeyboardEvent) {
 }
 
 function isContentBlock () {
-  return [BlockType.Text, BlockType.H1, BlockType.H2, BlockType.H3].includes(props.block.type)
+  return [BlockType.Text, BlockType.Quote, BlockType.H1, BlockType.H2, BlockType.H3].includes(props.block.type)
 }
 
 const content = ref<any>(null)
@@ -298,7 +298,7 @@ function getCaretCoordinates () {
 function getCaretPos () {
   const selection = window.getSelection()
   if (selection) {
-    if (props.block.type === BlockType.Text) {
+    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
       let offsetNode, offset = 0, tag = null
       let selectedNode = selection.anchorNode
       if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
@@ -332,7 +332,7 @@ function getCaretPos () {
 function getCaretPosWithoutTags () {
   const selection = window.getSelection()
   if (selection) {
-    if (props.block.type === BlockType.Text) {
+    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
       let offsetNode, offset = 0, tag = null
       let selectedNode = selection.anchorNode
       if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
@@ -364,7 +364,7 @@ function getCaretPosWithoutTags () {
 function setCaretPos (caretPos:number) {
   const innerContent = getInnerContent()
   if (innerContent) {
-    if (props.block.type === BlockType.Text) {
+    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
       let offsetNode, offset = 0
       const numNodes = (content.value as any).$el.firstChild.firstChild.childNodes.length
       for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
@@ -463,7 +463,7 @@ function clearSearch (searchTermLength: number, openedWithSlash: boolean = false
   setTimeout(() => {
     const originalText = (content.value as any).$el.innerText
     props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
-    if (props.block.type === BlockType.Text) {
+    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
       props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
     } else {
       (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
