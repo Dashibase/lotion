@@ -99,6 +99,7 @@ function getInnerContent () {
 function getTextContent () {
   const innerContent = getInnerContent()
   if (innerContent) return innerContent.parentElement ? innerContent.parentElement.textContent : innerContent.textContent
+  else return ''
 }
 
 function getHtmlContent () {
