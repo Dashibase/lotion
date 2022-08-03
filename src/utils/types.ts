@@ -24,9 +24,18 @@ export interface Details {
 
 export const BlockComponents = {
   [BlockType.Text]: TextBlock,
-  [BlockType.H1]: HeadingBlock,
+  [BlockType.H1]: TextBlock,
   [BlockType.H2]: HeadingBlock,
   [BlockType.H3]: HeadingBlock,
   [BlockType.Divider]: DividerBlock,
   [BlockType.Quote]: QuoteBlock,
+}
+
+export const blockTagMap = {
+  [BlockType.Text]: 'p',
+  [BlockType.H1]: 'h1',
+  [BlockType.H2]: '',
+  [BlockType.H3]: '',
+  [BlockType.Quote]: 'p',
+  [BlockType.Divider]: '',
 }

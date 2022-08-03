@@ -17,13 +17,15 @@ const props = defineProps({
 
 const markdownBlocks = computed(() => {
   return props.page.blocks.map(block => {
-    if (block.type === BlockType.Text || block.type === BlockType.Quote) {
+    if (block.type === BlockType.Text || block.type === BlockType.Quote || block.type === BlockType.H1) {
       return {
         type: block.type,
         details: {
           value: (block.details.value as string)
             .replaceAll('<p>', '')
             .replaceAll('</p>', '')
+            .replaceAll('<h1>', '')
+            .replaceAll('</h1>', '')
             .replaceAll('<strong>', '**')
             .replaceAll('</strong>', '**')
             .replaceAll('<em>', '*')
