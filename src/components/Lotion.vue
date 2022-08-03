@@ -95,6 +95,17 @@ function setBlockType (blockIdx: number, type: BlockType) {
 function merge (blockIdx: number) {
   if (blockIdx === 0) return
 
+  // When deleting the first character of non-text block
+  // the block should first turn into a text block
+  if([BlockType.H1, BlockType.H2, BlockType.H3,BlockType.Quote]
+      .includes(props.page.blocks[blockIdx].type)){
+    setBlockType(blockIdx, BlockType.Text)
+    setTimeout(()=>{
+      blockElements.value[blockIdx].moveToStart()
+    })
+    return
+  }
+
   if (props.page.blocks[blockIdx-1].type === BlockType.Text || props.page.blocks[blockIdx-1].type === BlockType.Quote) {
     const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
     props.page.blocks[blockIdx-1].details.value = ('<p>' + (props.page.blocks[blockIdx-1] as any).details.value.replace('<p>', '').replace('</p>', '') + blockElements.value[blockIdx].getHtmlContent().replaceAll(/\<br.*?\>/g, '').replace('<p>', '').replace('</p>', '') + '</p>').replace('</strong><strong>', '').replace('</em><em>', '')
