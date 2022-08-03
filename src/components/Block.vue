@@ -97,12 +97,18 @@ function getInnerContent () {
 }
 
 function getTextContent () {
+  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote || props.block.type === BlockType.H1) {
+    return content.value.$el.querySelector('.ProseMirror').editor.getText()
+  }
   const innerContent = getInnerContent()
   if (innerContent) return innerContent.parentElement ? innerContent.parentElement.textContent : innerContent.textContent
   else return ''
 }
 
 function getHtmlContent () {
+  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote || props.block.type === BlockType.H1) {
+    return content.value.$el.querySelector('.ProseMirror').editor.getHTML()
+  }
   const innerContent = getInnerContent()
   if (innerContent) return innerContent.parentElement.innerHTML
   else return ''
@@ -299,9 +305,9 @@ function getCaretCoordinates () {
 function getCaretPos () {
   const selection = window.getSelection()
   if (selection) {
+    let selectedNode = selection.anchorNode
     if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
       let offsetNode, offset = 0, tag = null
-      let selectedNode = selection.anchorNode
       if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
         selectedNode = selectedNode?.parentElement as Node
         tag = (selectedNode as HTMLElement).tagName.toLowerCase()
@@ -323,7 +329,7 @@ function getCaretPos () {
       }
       return { pos: offset + selection.anchorOffset + (selectedNode?.parentElement?.tagName === 'P' ? 3 : 0), tag }
     } else {
-      return { pos: selection.anchorOffset }
+      return { pos: selection.anchorOffset + (selectedNode?.parentElement?.tagName === 'H1' ? 4 : 0) }
     }
   } else {
     return { pos: 0 }
@@ -365,7 +371,7 @@ function getCaretPosWithoutTags () {
 function setCaretPos (caretPos:number) {
   const innerContent = getInnerContent()
   if (innerContent) {
-    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote || props.block.type === BlockType.H1) {
       let offsetNode, offset = 0
       const numNodes = (content.value as any).$el.firstChild.firstChild.childNodes.length
       for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {

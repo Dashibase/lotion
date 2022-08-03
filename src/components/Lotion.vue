@@ -26,9 +26,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUpdate, PropType } from 'vue'
+import { ref, onBeforeUpdate, PropType, nextTick } from 'vue'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
-import { Block, BlockType } from '@/utils/types'
+import { Block, BlockType, blockTagMap } from '@/utils/types'
 import BlockComponent from './Block.vue'
 
 const props = defineProps({
@@ -108,33 +108,65 @@ function merge (blockIdx: number) {
 
   if (props.page.blocks[blockIdx-1].type === BlockType.Text || props.page.blocks[blockIdx-1].type === BlockType.Quote) {
     const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
-    props.page.blocks[blockIdx-1].details.value = ('<p>' + (props.page.blocks[blockIdx-1] as any).details.value.replace('<p>', '').replace('</p>', '') + blockElements.value[blockIdx].getHtmlContent().replaceAll(/\<br.*?\>/g, '').replace('<p>', '').replace('</p>', '') + '</p>').replace('</strong><strong>', '').replace('</em><em>', '')
-    setTimeout(() => {
+    props.page.blocks[blockIdx-1].details.value = replaceTag(
+      (removeTag(props.page.blocks[blockIdx-1].details.value) + removeTag(blockElements.value[blockIdx].getHtmlContent())).replace('</strong><strong>', '').replace('</em><em>', ''),
+      blockTagMap[props.page.blocks[blockIdx-1].type],
+    )
+    
+    nextTick(() => {
       blockElements.value[blockIdx-1].setCaretPos(prevBlockContentLength)
       props.page.blocks.splice(blockIdx, 1)
     })
-  } else if ([BlockType.H1, BlockType.H2, BlockType.H3].includes(props.page.blocks[blockIdx-1].type)) {
+  } else if (props.page.blocks[blockIdx-1].type === BlockType.H1) {
+    const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
+    props.page.blocks[blockIdx-1].details.value = replaceTag(
+      removeTag(props.page.blocks[blockIdx-1].details.value) + blockElements.value[blockIdx].getTextContent(),
+      blockTagMap[props.page.blocks[blockIdx-1].type],
+    )
+    nextTick(() => {
+      blockElements.value[blockIdx-1].setCaretPos(prevBlockContentLength)
+      props.page.blocks.splice(blockIdx, 1)
+    })
+  } else if ([BlockType.H2, BlockType.H3].includes(props.page.blocks[blockIdx-1].type)) {
     const prevBlockContentLength = (props.page.blocks[blockIdx-1] as any).details.value.length
     props.page.blocks[blockIdx-1].details.value += blockElements.value[blockIdx].getTextContent()
-    setTimeout(() => {
+    nextTick(() => {
       blockElements.value[blockIdx-1].setCaretPos(prevBlockContentLength)
       props.page.blocks.splice(blockIdx, 1)
     })
   } else {
     props.page.blocks.splice(blockIdx-1, 1)
-    setTimeout(() => blockElements.value[blockIdx-1].moveToStart())
+    nextTick(() => blockElements.value[blockIdx-1].moveToStart())
   }
 }
 
 function split (blockIdx: number) {
   const caretPos = blockElements.value[blockIdx].getCaretPos()
   insertBlock(blockIdx)
-  props.page.blocks[blockIdx+1].details.value = (caretPos.tag ? `<p><${caretPos.tag}>` : '<p>') + props.page.blocks[blockIdx].details.value?.slice(caretPos.pos)
-  if (props.page.blocks[blockIdx].type === BlockType.Text || props.page.blocks[blockIdx].type === BlockType.Quote) {
-    props.page.blocks[blockIdx].details.value = props.page.blocks[blockIdx].details.value?.slice(0, caretPos.pos) + (caretPos.tag ? `</${caretPos.tag}></p>` : '</p>')
-  } else {
-    props.page.blocks[blockIdx].details.value = props.page.blocks[blockIdx].details.value?.slice(0, caretPos.pos) + (caretPos.tag ? `</${caretPos.tag}></p>` : '')
-  }
-  setTimeout(() => blockElements.value[blockIdx+1].moveToStart())
+  const [prevContent, nextContent] = splitContentByIndex(props.page.blocks[blockIdx].details.value, caretPos.pos)
+
+  props.page.blocks[blockIdx+1].details.value = replaceTag(caretPos.tag ? `<${caretPos.tag}>${nextContent}` : nextContent, 'p')
+
+  props.page.blocks[blockIdx].details.value = replaceTag(caretPos.tag ? `${prevContent}</${caretPos.tag}>` : prevContent, blockTagMap[props.page.blocks[blockIdx].type])
+
+  nextTick(() => blockElements.value[blockIdx+1].moveToStart())
+}
+
+
+function splitContentByIndex(content: string | undefined, index: number) {
+  if (!content) return ['', '']
+  return [content.slice(0, index), content.slice(index)];
+}
+
+function removeTag(content: string | undefined) {
+  if (!content) return ''
+  return content.replace(/^<(p|h[123])>/, '').replace(/<\/(p|h[123])>$/, '')
+}
+
+function replaceTag(content: string, tag: string) {
+  const text = removeTag(content)
+
+  if (!tag) return text
+  return `<${tag}>${text}</${tag}>`
 }
 </script>

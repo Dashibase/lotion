@@ -8,6 +8,7 @@ import { watch } from 'vue'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
+import Heading from '@tiptap/extension-heading'
 import Bold from '@tiptap/extension-bold'
 import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
@@ -27,6 +28,9 @@ const editor = useEditor({
     Document,
     Paragraph,
     Text,
+    Heading.configure({
+      levels: [1],
+    }),
     Bold,
     Italic,
     History,

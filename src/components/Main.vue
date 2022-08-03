@@ -20,7 +20,7 @@ const page = ref({
   blocks:[{
     type: BlockType.H1,
     details: {
-      value: 'Get Started'
+      value: '<h1>Get Started</h1>'
     },
   }, {
     type: BlockType.Divider,
