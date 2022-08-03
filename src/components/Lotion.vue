@@ -93,8 +93,6 @@ function setBlockType (blockIdx: number, type: BlockType) {
 }
 
 function merge (blockIdx: number) {
-  if (blockIdx === 0) return
-
   // When deleting the first character of non-text block
   // the block should first turn into a text block
   if([BlockType.H1, BlockType.H2, BlockType.H3,BlockType.Quote]
@@ -105,6 +103,8 @@ function merge (blockIdx: number) {
     })
     return
   }
+
+  if (blockIdx === 0) return
 
   if (props.page.blocks[blockIdx-1].type === BlockType.Text || props.page.blocks[blockIdx-1].type === BlockType.Quote) {
     const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
