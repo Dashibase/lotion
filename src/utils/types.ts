@@ -5,6 +5,7 @@ import QuoteBlock from '@/components/blocks/QuoteBlock.vue'
 
 
 export interface Block {
+  id: string,
   type: BlockType;
   details: Details;
 }
@@ -29,4 +30,10 @@ export const BlockComponents = {
   [BlockType.H3]: HeadingBlock,
   [BlockType.Divider]: DividerBlock,
   [BlockType.Quote]: QuoteBlock,
+}
+
+export const textBlockMap = [BlockType.Text, BlockType.Quote]
+
+export const isTextBlock = (type: string) => {
+  return textBlockMap.some(textBlock => textBlock === type)
 }

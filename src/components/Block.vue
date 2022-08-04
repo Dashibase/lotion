@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import { ref, PropType } from 'vue'
-import { Block, BlockType, BlockComponents } from '@/utils/types'
+import { Block, BlockType, BlockComponents, isTextBlock } from '@/utils/types'
 import BlockMenu from './BlockMenu.vue'
 import Tooltip from './elements/Tooltip.vue'
 
@@ -63,7 +63,7 @@ const emit = defineEmits([
 ])
 
 function getFirstChild () {
-  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+  if (isTextBlock(props.block.type)) {
     if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
       return (content.value as any).$el.firstChild.firstChild.firstChild
     } else {
@@ -76,7 +76,7 @@ function getFirstChild () {
 }
 
 function getLastChild () {
-  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+  if (isTextBlock(props.block.type)) {
     if ((content.value as any).$el.firstChild.firstChild.childNodes.length > 1) {
       return (content.value as any).$el.firstChild.firstChild.lastChild
     } else {
@@ -89,7 +89,7 @@ function getLastChild () {
 }
 
 function getInnerContent () {
-  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+  if (isTextBlock(props.block.type)) {
     return (content.value as any).$el.firstChild.firstChild.firstChild
   } else {
     return (content.value as any).$el.firstChild
@@ -299,7 +299,7 @@ function getCaretCoordinates () {
 function getCaretPos () {
   const selection = window.getSelection()
   if (selection) {
-    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+  if (isTextBlock(props.block.type)) {
       let offsetNode, offset = 0, tag = null
       let selectedNode = selection.anchorNode
       if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
@@ -333,7 +333,7 @@ function getCaretPos () {
 function getCaretPosWithoutTags () {
   const selection = window.getSelection()
   if (selection) {
-    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+  if (isTextBlock(props.block.type)) {
       let offsetNode, offset = 0, tag = null
       let selectedNode = selection.anchorNode
       if (['STRONG', 'EM'].includes(selectedNode?.parentElement?.tagName as string)) {
@@ -365,7 +365,7 @@ function getCaretPosWithoutTags () {
 function setCaretPos (caretPos:number) {
   const innerContent = getInnerContent()
   if (innerContent) {
-    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+  if (isTextBlock(props.block.type)) {
       let offsetNode, offset = 0
       const numNodes = (content.value as any).$el.firstChild.firstChild.childNodes.length
       for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
@@ -425,27 +425,33 @@ function parseMarkdown (event:KeyboardEvent) {
   const textContent = getTextContent()
   if(!textContent) return
 
-  const headingRegexpMap = {
+  const markdownRegexpMap = {
     [BlockType.H1]: /^#\s(.*)$/,
     [BlockType.H2]: /^##\s(.*)$/,
     [BlockType.H3]: /^###\s(.*)$/,
+    [BlockType.Quote]: /^>\s(.*)$/,
+    [BlockType.Divider]: /^---$/
   }
-  const handleHeadingContent = (blockType: keyof typeof headingRegexpMap) => {
+
+  const handleMarkdownContent = (blockType: keyof typeof markdownRegexpMap) => {
     emit('setBlockType', blockType)
-    const newContent = textContent.replace(headingRegexpMap[blockType], '$1')
+    const newContent = textContent.replace(markdownRegexpMap[blockType], '$1')
     ;(content.value as any).innerText = newContent
     props.block.details.value = newContent
   }
 
-  if (textContent.match(headingRegexpMap[BlockType.H1]) && event.key === ' ') {
-    handleHeadingContent(BlockType.H1)
-  } else if (textContent.match(headingRegexpMap[BlockType.H2]) && event.key === ' ') {
-    handleHeadingContent(BlockType.H2)
-  } else if (textContent.match(headingRegexpMap[BlockType.H3]) && event.key === ' ') {
-    handleHeadingContent(BlockType.H3)
-  } else if (textContent.match(/^---$/)) {
-    emit('setBlockType', BlockType.Divider);
-    (content.value as any).innerText = ''
+
+  if (textContent.match(markdownRegexpMap[BlockType.H1]) && event.key === ' ') {
+    handleMarkdownContent(BlockType.H1)
+  } else if (textContent.match(markdownRegexpMap[BlockType.H2]) && event.key === ' ') {
+    handleMarkdownContent(BlockType.H2)
+  } else if (textContent.match(markdownRegexpMap[BlockType.H3]) && event.key === ' ') {
+    handleMarkdownContent(BlockType.H3)
+  } else if (textContent.match(markdownRegexpMap[BlockType.Quote]) && event.key === ' ') {
+    handleMarkdownContent(BlockType.Quote)
+  } else if (textContent.match(markdownRegexpMap[BlockType.Divider])) {
+    handleMarkdownContent(BlockType.Divider)
+    props.block.details.value = ''
   } else if (event.key === '/') {
     if (menu.value && !menu.value.open) {
       menu.value.open = true
@@ -465,7 +471,7 @@ function clearSearch (searchTermLength: number, openedWithSlash: boolean = false
     const originalText = (content.value as any).$el.innerText
     if (!originalText) return
     props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
-    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+    if (isTextBlock(props.block.type)) {
       props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
     } else {
       (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
