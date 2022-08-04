@@ -5,6 +5,7 @@ import QuoteBlock from '@/components/blocks/QuoteBlock.vue'
 
 
 export interface Block {
+  id: string,
   type: BlockType;
   details: Details;
 }
