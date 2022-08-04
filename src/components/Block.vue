@@ -425,27 +425,33 @@ function parseMarkdown (event:KeyboardEvent) {
   const textContent = getTextContent()
   if(!textContent) return
 
-  const headingRegexpMap = {
+  const markdownRegexpMap = {
     [BlockType.H1]: /^#\s(.*)$/,
     [BlockType.H2]: /^##\s(.*)$/,
     [BlockType.H3]: /^###\s(.*)$/,
+    [BlockType.Quote]: /^>\s(.*)$/,
+    [BlockType.Divider]: /^---$/
   }
-  const handleHeadingContent = (blockType: keyof typeof headingRegexpMap) => {
+
+  const handleMarkdownContent = (blockType: keyof typeof markdownRegexpMap) => {
     emit('setBlockType', blockType)
-    const newContent = textContent.replace(headingRegexpMap[blockType], '$1')
+    const newContent = textContent.replace(markdownRegexpMap[blockType], '$1')
     ;(content.value as any).innerText = newContent
     props.block.details.value = newContent
   }
 
-  if (textContent.match(headingRegexpMap[BlockType.H1]) && event.key === ' ') {
-    handleHeadingContent(BlockType.H1)
-  } else if (textContent.match(headingRegexpMap[BlockType.H2]) && event.key === ' ') {
-    handleHeadingContent(BlockType.H2)
-  } else if (textContent.match(headingRegexpMap[BlockType.H3]) && event.key === ' ') {
-    handleHeadingContent(BlockType.H3)
-  } else if (textContent.match(/^---$/)) {
-    emit('setBlockType', BlockType.Divider);
-    (content.value as any).innerText = ''
+
+  if (textContent.match(markdownRegexpMap[BlockType.H1]) && event.key === ' ') {
+    handleMarkdownContent(BlockType.H1)
+  } else if (textContent.match(markdownRegexpMap[BlockType.H2]) && event.key === ' ') {
+    handleMarkdownContent(BlockType.H2)
+  } else if (textContent.match(markdownRegexpMap[BlockType.H3]) && event.key === ' ') {
+    handleMarkdownContent(BlockType.H3)
+  } else if (textContent.match(markdownRegexpMap[BlockType.Quote]) && event.key === ' ') {
+    handleMarkdownContent(BlockType.Quote)
+  } else if (textContent.match(markdownRegexpMap[BlockType.Divider])) {
+    handleMarkdownContent(BlockType.Divider)
+    props.block.details.value = ''
   } else if (event.key === '/') {
     if (menu.value && !menu.value.open) {
       menu.value.open = true
