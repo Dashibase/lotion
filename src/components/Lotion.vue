@@ -84,9 +84,7 @@ function deleteBlock (blockIdx: number) {
 }
 
 function setBlockType (blockIdx: number, type: BlockType) {
-  if (isTextBlock(props.page.blocks[blockIdx].type)) {
-    props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
-  }
+  props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
   props.page.blocks[blockIdx].type = type
   if (type === BlockType.Divider) {
     props.page.blocks[blockIdx].details = {}
