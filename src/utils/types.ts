@@ -30,3 +30,9 @@ export const BlockComponents = {
   [BlockType.Divider]: DividerBlock,
   [BlockType.Quote]: QuoteBlock,
 }
+
+export const textBlockMap = [BlockType.Text, BlockType.Quote]
+
+export const isTextBlock = (type: string) => {
+  return textBlockMap.some(textBlock => textBlock === type)
+}

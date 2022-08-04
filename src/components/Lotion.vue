@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { ref, onBeforeUpdate, PropType } from 'vue'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
-import { Block, BlockType } from '@/utils/types'
+import { Block, BlockType, isTextBlock } from '@/utils/types'
 import BlockComponent from './Block.vue'
 
 const props = defineProps({
@@ -82,7 +82,7 @@ function deleteBlock (blockIdx: number) {
 }
 
 function setBlockType (blockIdx: number, type: BlockType) {
-  if (props.page.blocks[blockIdx].type === BlockType.Text || props.page.blocks[blockIdx].type === BlockType.Quote) {
+  if (isTextBlock(props.page.blocks[blockIdx].type)) {
     props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
   }
   props.page.blocks[blockIdx].type = type
@@ -106,7 +106,7 @@ function merge (blockIdx: number) {
 
   if (blockIdx === 0) return
 
-  if (props.page.blocks[blockIdx-1].type === BlockType.Text || props.page.blocks[blockIdx-1].type === BlockType.Quote) {
+  if (isTextBlock(props.page.blocks[blockIdx-1].type)) {
     const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
     props.page.blocks[blockIdx-1].details.value = ('<p>' + (props.page.blocks[blockIdx-1] as any).details.value.replace('<p>', '').replace('</p>', '') + blockElements.value[blockIdx].getHtmlContent().replaceAll(/\<br.*?\>/g, '').replace('<p>', '').replace('</p>', '') + '</p>').replace('</strong><strong>', '').replace('</em><em>', '')
     setTimeout(() => {
@@ -130,7 +130,7 @@ function split (blockIdx: number) {
   const caretPos = blockElements.value[blockIdx].getCaretPos()
   insertBlock(blockIdx)
   props.page.blocks[blockIdx+1].details.value = (caretPos.tag ? `<p><${caretPos.tag}>` : '<p>') + props.page.blocks[blockIdx].details.value?.slice(caretPos.pos)
-  if (props.page.blocks[blockIdx].type === BlockType.Text || props.page.blocks[blockIdx].type === BlockType.Quote) {
+  if (isTextBlock(props.page.blocks[blockIdx].type)) {
     props.page.blocks[blockIdx].details.value = props.page.blocks[blockIdx].details.value?.slice(0, caretPos.pos) + (caretPos.tag ? `</${caretPos.tag}></p>` : '</p>')
   } else {
     props.page.blocks[blockIdx].details.value = props.page.blocks[blockIdx].details.value?.slice(0, caretPos.pos) + (caretPos.tag ? `</${caretPos.tag}></p>` : '')
