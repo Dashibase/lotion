@@ -8,7 +8,7 @@
     <draggable tag="div" :list="props.page.blocks"  handle=".handle"
       v-bind="dragOptions" class="-ml-24 space-y-2 pb-4">
       <transition-group type="transition">
-        <BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i"
+        <BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i" :id="'block-'+block.id"
           :ref="el => blockElements[i] = (el as unknown as typeof Block)"
           @deleteBlock="deleteBlock(i)"
           @newBlock="insertBlock(i)"
@@ -30,6 +30,7 @@ import { ref, onBeforeUpdate, PropType } from 'vue'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import { Block, BlockType, isTextBlock } from '@/utils/types'
 import BlockComponent from './Block.vue'
+import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
   page: {
@@ -62,6 +63,7 @@ function scrollIntoView () {
 
 function insertBlock (blockIdx: number) {
   props.page.blocks.splice(blockIdx + 1, 0, {
+    id: uuidv4(),
     type: BlockType.Text,
     details: {
       value: '',

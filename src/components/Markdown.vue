@@ -19,6 +19,7 @@ const markdownBlocks = computed(() => {
   return props.page.blocks.map(block => {
     if (isTextBlock(block.type)) {
       return {
+        id: block.id,
         type: block.type,
         details: {
           value: (block.details.value as string)

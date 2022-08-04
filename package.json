@@ -13,6 +13,7 @@
     "@tiptap/vue-3": "^2.0.0-beta.96",
     "fuse.js": "^6.6.2",
     "oh-vue-icons": "^1.0.0-rc3",
+    "uuid": "^8.3.2",
     "vue": "^3.2.37",
     "vue-draggable-next": "^2.1.1"
   },
@@ -20,6 +21,7 @@
     "@babel/types": "^7.18.9",
     "@types/node": "^18.0.6",
     "@types/sortablejs": "^1.13.0",
+    "@types/uuid": "^8.3.4",
     "@vitejs/plugin-vue": "^3.0.0",
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.14",
