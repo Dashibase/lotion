@@ -451,6 +451,7 @@ function parseMarkdown (event:KeyboardEvent) {
     handleMarkdownContent(BlockType.Quote)
   } else if (textContent.match(markdownRegexpMap[BlockType.Divider])) {
     handleMarkdownContent(BlockType.Divider)
+    props.block.details.value = ''
   } else if (event.key === '/') {
     if (menu.value && !menu.value.open) {
       menu.value.open = true
