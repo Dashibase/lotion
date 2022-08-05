@@ -468,7 +468,7 @@ function clearSearch (searchTermLength: number, openedWithSlash: boolean = false
   let pos:number, startIdx:number, endIdx:number;
   let finalText:string, finalTextWithTags:string = '';
   // Refers to current block type before change
-  if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+  if (isTextBlock(props.block.type)) {
     pos = getCaretPos().pos;
     // Subtract extra 3 for <p> in front
     startIdx = pos - searchTermLength - 4;
@@ -483,14 +483,8 @@ function clearSearch (searchTermLength: number, openedWithSlash: boolean = false
   finalText = textContent.substring(0, startIdx) + textContent.substring(endIdx)
 
   setTimeout(() => {
-<<<<<<< HEAD
-    const originalText = (content.value as any).$el.innerText
-    props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
-    if (isTextBlock(props.block.type)) {
-      props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
-=======
     // Refers to block type after change
-    if (props.block.type === BlockType.Text || props.block.type === BlockType.Quote) {
+    if (isTextBlock(props.block.type)) {
       if (finalTextWithTags !== '') {
         props.block.details.value = '<p>' + finalTextWithTags + '</p>'
       } else {
@@ -499,7 +493,6 @@ function clearSearch (searchTermLength: number, openedWithSlash: boolean = false
       }
     } else if (props.block.type === BlockType.Divider) {
       props.block.details = {}
->>>>>>> Modified clearSearch behaviour to allow <strong> and <em> tags to persist after block type change
     } else {
       props.block.details.value = finalText
     }
