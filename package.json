@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test-ct": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
     "@tiptap/starter-kit": "^2.0.0-beta.191",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@babel/types": "^7.18.9",
+    "@playwright/experimental-ct-vue": "^1.25.0",
     "@playwright/test": "^1.25.0",
     "@types/node": "^18.0.6",
     "@types/sortablejs": "^1.13.0",
