@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
-import { repeatKey } from '../utils/helpers.ts'
+import { BlockType } from '../utils/testTypes.ts'
+import { repeatKey, isBlockType } from '../utils/helpers.ts'
 
 test('basic typing and editing should work', async ({ page }) => {
   await page.goto('/')
@@ -24,7 +25,7 @@ test('basic typing and editing should work', async ({ page }) => {
   expect(text).toBe('Give these things a try: <strong>bold</strong> <em>italics</em>')
 })
 
-test.only('converting between types via mouse should work', async ({ page }) => {
+test('converting between types via mouse should work', async ({ page }) => {
   await page.goto('/')
   expect(page).toHaveTitle(/Lotion/)
 
@@ -34,30 +35,30 @@ test.only('converting between types via mouse should work', async ({ page }) => 
   await page.locator('text=Heading 2').nth(0).click()
   let text = await block.innerHTML()
   expect(text).toBe("Get Started")
-  let hasCorrectClass = await block.evaluate((el) => el.classList.contains('text-3xl'))
-  expect(hasCorrectClass).toBe(true)
+  const isH2 = await isBlockType(block, BlockType.H2)
+  expect(isH2).toBe(true)
 
   // Convert to H3
   await page.locator('data-test-id=openmenu').nth(0).click()
   await page.locator('text=Heading 3').nth(0).click()
   text = await block.innerHTML()
   expect(text).toBe("Get Started")
-  hasCorrectClass = await block.evaluate((el) => el.classList.contains('text-2xl'))
-  expect(hasCorrectClass).toBe(true)
+  const isH3 = await isBlockType(block, BlockType.H3)
+  expect(isH3).toBe(true)
 
   // Convert to Text
   await page.locator('data-test-id=openmenu').nth(0).click()
   await page.locator('text="Text"').nth(0).click()
   text = await block.innerHTML()
   expect(text).toBe("Get Started")
-  hasCorrectClass = await block.evaluate((el) => el.classList.length === 0)
-  expect(hasCorrectClass).toBe(true)
+  const isText = await isBlockType(block, BlockType.Text)
+  expect(isText).toBe(true)
 
   // Convert to Quote
   await page.locator('data-test-id=openmenu').nth(0).click()
   await page.locator('text="Quote"').nth(0).click()
   text = await block.innerHTML()
   expect(text).toBe("Get Started")
-  hasCorrectClass = await block.locator('..').locator('..').evaluate((el) => el.classList.contains('border-black'))
-  expect(hasCorrectClass).toBe(true)
+  const isQuote = await isBlockType(block, BlockType.Quote)
+  expect(isQuote).toBe(true)
 })
