@@ -21,5 +21,6 @@ export default defineConfig({
       // Run e2e with Playwright
       './tests/e2e/**',
     ],
+    environment: 'happy-dom',
   },
 })
