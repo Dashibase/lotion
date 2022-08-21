@@ -45,7 +45,9 @@ const props = defineProps({
     type: Object as PropType<Block>,
     default: {
       type: BlockType.Text,
-      details: {},
+      details: {
+        value: '<p>Hello World</p>',
+      },
     },
   },
 })
