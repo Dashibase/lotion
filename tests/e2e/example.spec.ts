@@ -31,7 +31,7 @@ test('converting between types via mouse should work', async ({ page }) => {
 
   const block = await page.locator('text="Get Started"')
   // Convert to H2
-  await page.locator('data-test-id=openmenu').nth(0).click()
+  await page.locator('data-test-id=block-menu').nth(0).click()
   await page.locator('text=Heading 2').nth(0).click()
   let text = await block.innerHTML()
   expect(text).toBe("Get Started")
@@ -39,7 +39,7 @@ test('converting between types via mouse should work', async ({ page }) => {
   expect(isH2).toBe(true)
 
   // Convert to H3
-  await page.locator('data-test-id=openmenu').nth(0).click()
+  await page.locator('data-test-id=block-menu').nth(0).click()
   await page.locator('text=Heading 3').nth(0).click()
   text = await block.innerHTML()
   expect(text).toBe("Get Started")
@@ -47,7 +47,7 @@ test('converting between types via mouse should work', async ({ page }) => {
   expect(isH3).toBe(true)
 
   // Convert to Text
-  await page.locator('data-test-id=openmenu').nth(0).click()
+  await page.locator('data-test-id=block-menu').nth(0).click()
   await page.locator('text="Text"').nth(0).click()
   text = await block.innerHTML()
   expect(text).toBe("Get Started")
@@ -55,7 +55,7 @@ test('converting between types via mouse should work', async ({ page }) => {
   expect(isText).toBe(true)
 
   // Convert to Quote
-  await page.locator('data-test-id=openmenu').nth(0).click()
+  await page.locator('data-test-id=block-menu').nth(0).click()
   await page.locator('text="Quote"').nth(0).click()
   text = await block.innerHTML()
   expect(text).toBe("Get Started")
