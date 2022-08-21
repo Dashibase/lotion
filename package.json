@@ -8,6 +8,8 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "test-ct": "playwright test -c playwright-ct.config.ts"
+    "test:unit": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@tiptap/starter-kit": "^2.0.0-beta.191",
@@ -26,11 +28,14 @@
     "@types/sortablejs": "^1.13.0",
     "@types/uuid": "^8.3.4",
     "@vitejs/plugin-vue": "^3.0.0",
+    "@vue/test-utils": "^2.0.2",
     "autoprefixer": "^10.4.7",
+    "happy-dom": "^6.0.4",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.6",
     "typescript": "^4.6.4",
     "vite": "^3.0.0",
+    "vitest": "^0.22.1",
     "vue-tsc": "^0.38.4"
   }
 }
