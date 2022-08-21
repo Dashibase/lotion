@@ -1,9 +1,9 @@
 name: Vitest Tests
 on:
   push:
-    branches: [ tests-wip ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ tests-wip ]
+    branches: [ main, dev ]
 jobs:
   test:
     timeout-minutes: 60
