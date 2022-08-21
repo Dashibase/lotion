@@ -7,7 +7,6 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test-ct": "playwright test -c playwright-ct.config.ts",
     "test:unit": "vitest",
     "test:e2e": "playwright test"
   },
@@ -22,7 +21,6 @@
   },
   "devDependencies": {
     "@babel/types": "^7.18.9",
-    "@playwright/experimental-ct-vue": "^1.25.0",
     "@playwright/test": "^1.25.0",
     "@types/node": "^18.0.6",
     "@types/sortablejs": "^1.13.0",
