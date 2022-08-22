@@ -11,6 +11,7 @@ import Text from '@tiptap/extension-text'
 import Bold from '@tiptap/extension-bold'
 import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
+import Placeholder from '@tiptap/extension-placeholder'
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 
 const props = defineProps({
@@ -30,6 +31,9 @@ const editor = useEditor({
     Bold,
     Italic,
     History,
+    Placeholder.configure({
+      placeholder: 'Type \'/\' for a menu'
+    })
   ],
   editorProps: { 
     // Removing default behavior for drop event

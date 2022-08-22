@@ -29,5 +29,10 @@ export const turnIntoOptions = [
     icon: 'bi-hr',
     label: 'Divider',
     blockType: BlockType.Divider,
+  }, {
+    type: 'Turn into',
+    icon: 'bi-quote',
+    label: 'Quote',
+    blockType: BlockType.Quote,
   },
 ] as { type:string, icon:string, label:string, blockType:BlockType|string}[]

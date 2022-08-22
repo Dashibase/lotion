@@ -1,14 +1,18 @@
 {
-  "name": "lotion",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@octarin/lolo",
+  "version": "0.0.30",
   "type": "module",
+  "main": "lib/lolo.js",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:unit": "vitest",
+    "test:e2e": "playwright test",
+    "build-bundle": "vite build --mode library && npx tailwind -c ./tailwind.config.cjs -i ./src/index.css -o lib/style.css"
   },
   "dependencies": {
+    "@tiptap/extension-placeholder": "^2.0.0-beta.53",
     "@tiptap/starter-kit": "^2.0.0-beta.191",
     "@tiptap/vue-3": "^2.0.0-beta.96",
     "fuse.js": "^6.6.2",

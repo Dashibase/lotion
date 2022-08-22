@@ -3,9 +3,27 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  border-width: 0;
+}
+
 [contenteditable='true']:focus-visible,
 [contenteditable='true']:focus {
   outline: none;
+}
+
+.lotion * {
+  box-sizing: border-box;
+}
+
+.lotion p,
+pre.lotion-md {
+  margin: 0;
+}
+
+pre.lotion-md {
+  font-family: theme('fontFamily.mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+  font-size: 1em;
 }
 
 [contenteditable]:empty:after {
@@ -17,4 +35,12 @@
 .ghost {
   opacity: 1;
   background: #F5F5F5;
+}
+
+.ProseMirror:focus p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
 }

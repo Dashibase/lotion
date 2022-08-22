@@ -1,5 +1,5 @@
 <template>
-  <pre class="whitespace-pre-wrap p-10">
+  <pre class="lotion-md whitespace-pre-wrap p-10 m-0 text-base">
 {{ JSON.stringify(markdownBlocks, null, 2) }}
   </pre>
 </template>

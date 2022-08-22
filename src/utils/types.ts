@@ -21,6 +21,7 @@ export enum BlockType {
 
 export interface Details {
   value?: string;
+  blockTypes?: BlockType[];
 }
 
 export const BlockComponents = {

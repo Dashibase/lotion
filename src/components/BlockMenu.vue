@@ -38,11 +38,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, PropType } from 'vue'
 import Fuse from 'fuse.js'
 import { BlockType } from '@/utils/types'
 import Tooltip from './elements/Tooltip.vue'
 import { turnIntoOptions } from '@/utils/menu'
+
+const props = defineProps({
+  blockTypes: {
+    type: Object as PropType<null|(string|BlockType)[]>,
+    default: null,
+  },
+})
 
 const emit = defineEmits([
   'setBlockType',
@@ -94,8 +101,7 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
   } else if (event.key === 'Enter') {
     // Enter selects menu option
     event.preventDefault()
-    const callback = () => setBlockType(options.value[active.value].blockType)
-    if (callback) callback()
+    setBlockType(options.value[active.value].blockType)
   } else if (event.key === 'Escape') {
     // Escape closes menu
     open.value = false
@@ -113,20 +119,26 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
   }
 })
 
+/*
+Menu options
+*/
+
 const fuzzySearch = new Fuse(turnIntoOptions, {
   keys: ['label']
 })
 
 const options = computed(() => {
-  return searchTerm.value === ''
+  const options = searchTerm.value === ''
     ? turnIntoOptions
     : fuzzySearch.search(searchTerm.value).map(result => result.item)
+  if (props.blockTypes) return options.filter(option => props.blockTypes?.includes(option.blockType))
+  else return options
 })
 
-function setBlockType (blockType:BlockType) {
-  if (searchTerm.value.length > 0 || openedWithSlash.value)
-    emit('clearSearch', searchTerm.value.length, openedWithSlash.value)
-  emit('setBlockType', blockType)
+function setBlockType (blockType:BlockType|string) {
+  // if (searchTerm.value.length > 0 || openedWithSlash.value)
+  //   emit('clearSearch', searchTerm.value.length, openedWithSlash.value)
+  emit('setBlockType', blockType, searchTerm.value.length, openedWithSlash.value)
 
   searchTerm.value = ''
   open.value = false

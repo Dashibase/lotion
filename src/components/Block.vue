@@ -5,11 +5,13 @@
       'pt-12 first:pt-0': block.type === BlockType.H1,
       'pt-4 first:pt-0': block.type === BlockType.H2,
     }">
-    <div class="h-full px-2 pl-4 py-1.5 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
+    <div class="h-full pl-4 pr-2 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
       :class="{
+        'invisible': props.readonly,
         'py-3.5': block.type === BlockType.H1,
         'py-3': block.type === BlockType.H2,
         'py-2.5': block.type === BlockType.H3,
+        'py-1.5': ![BlockType.H1, BlockType.H2, BlockType.H3].includes(block.type),
       }">
       <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to delete block</span>">
         <v-icon name="hi-trash" @click="emit('deleteBlock')"
@@ -20,14 +22,14 @@
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
       </Tooltip>
       <BlockMenu ref="menu"
-        @setBlockType="type => emit('setBlockType', type)"
-        @clearSearch="clearSearch"
+        @setBlockType="setBlockType"
+        :blockTypes="props.block.details.blockTypes || props.blockTypes"
         />
     </div>
-    <div class="w-full relative" :class="{ 'px-4 sm:px-0': block.type !== BlockType.Divider }">
+    <div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
       <!-- Actual content -->
       <component :is="BlockComponents[props.block.type]" ref="content"
-        :block="block"
+        :block="block" :readonly="props.readonly"
         @keydown.capture="keyDownHandler"
         @keyup="parseMarkdown" />
     </div>
@@ -47,6 +49,14 @@ const props = defineProps({
       type: BlockType.Text,
       details: {},
     },
+  },
+  blockTypes: {
+    type: Object as PropType<null|(string|BlockType)[]>,
+    default: null,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -460,23 +470,33 @@ function parseMarkdown (event:KeyboardEvent) {
   }
 }
 
-function clearSearch (searchTermLength: number, openedWithSlash: boolean = false) {
+function setBlockType (blockType: BlockType, searchTermLength: number, openedWithSlash: boolean = false) {
+  clearSearch(searchTermLength, openedWithSlash)
+    .then(() => emit('setBlockType', blockType))
+}
+
+async function clearSearch (searchTermLength: number, openedWithSlash: boolean = false) {
   // If openedWithSlash, searchTermLength = 0 but we still need to clear
   if (searchTermLength < 1 && !openedWithSlash) 
     return
   const pos = getCaretPosWithoutTags().pos
   const startIdx = pos - searchTermLength - 1
   const endIdx = pos
-  setTimeout(() => {
-    const originalText = (content.value as any).$el.innerText
-    if (!originalText) return
-    props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
-    if (isTextBlock(props.block.type)) {
-      props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
-    } else {
-      (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
-    }
-    setTimeout(() => setCaretPos(startIdx))
+  await new Promise<void>(resolve => {
+    setTimeout(() => {
+      const originalText = (content.value as any).$el.innerText
+      if (!originalText) return
+      props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
+      if (props.block.type === BlockType.Text) {
+        props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
+      } else {
+        (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
+      }
+      setTimeout(() => {
+        setCaretPos(startIdx)
+        resolve()
+      })
+    })
   })
 }
 
