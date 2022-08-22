@@ -40,7 +40,7 @@ const props = defineProps({
 })
 
 const editor = ref<HTMLDivElement|null>(null)
-document.addEventListener('click', (event:MouseEvent) => {
+document.addEventListener('mousedown', (event:MouseEvent) => {
   // Automatically focus on nearest block on click
   const blocks = document.getElementById('blocks')
   const title = document.getElementById('title')
