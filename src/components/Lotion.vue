@@ -7,7 +7,7 @@
       :class="props.page.name ? '' : 'empty'">
       {{ props.page.name || '' }}
     </h1>
-    <draggable tag="div" :list="props.page.blocks"  handle=".handle"
+    <draggable id="blocks" tag="div" :list="props.page.blocks"  handle=".handle"
       v-bind="dragOptions" class="-ml-24 space-y-2 pb-4">
       <transition-group type="transition">
         <BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i" :id="'block-'+block.id"
@@ -49,6 +49,61 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+})
+
+const editor = ref<HTMLDivElement|null>(null)
+document.addEventListener('click', (event:MouseEvent) => {
+  // Automatically focus on nearest block on click
+  const blocks = document.getElementById('blocks')
+  const title = document.getElementById('title')
+  const editorRect = editor.value?.getClientRects()[0]
+  // Check that click is outside Editor
+  if ((event.clientX < ((editorRect as DOMRect).left || -1)) || (event.clientX > (editorRect?.right || window.innerWidth))) {
+    // Focus on title
+    const titleRect = title?.getClientRects()[0]
+    if (event.clientY > (titleRect?.top || window.innerHeight) && event.clientY < (titleRect?.bottom || 0)) {
+      // Check if click is on left or right side
+      const rect = title?.getClientRects()[0]
+      let moveToStart = true
+      if (event.x > (rect as DOMRect).right) moveToStart = false 
+      const selection = window.getSelection()
+      const range = document.createRange()
+      range.selectNodeContents(title as Node)
+      range.collapse(moveToStart)
+      selection?.removeAllRanges()
+      selection?.addRange(range)
+      return
+    }
+    // or nearest block
+    const blockRects = Array.from(blocks?.children as HTMLCollection)
+    const block = blockRects.find(child => {
+      const rect = child.getClientRects()[0]
+      return event.clientY > rect.top && event.clientY < rect.bottom
+    })
+    const blockIdx = blockRects.findIndex(child => {
+      const rect = child.getClientRects()[0]
+      return event.clientY > rect.top && event.clientY < rect.bottom
+    })
+    if (block) {
+      // Check if click is on left or right side
+      const rect = block.getClientRects()[0]
+      if (event.x < rect.left) {
+        // Move to start of block
+        blockElements.value[blockIdx].moveToStart()
+      } else {
+        // Move to end of block
+        blockElements.value[blockIdx].moveToEnd()
+      }
+      return
+    }
+  }
+  // If cursor is between Submit button and last block, insert block there 
+  const lastBlockRect = blocks?.lastElementChild?.getClientRects()[0]
+  if (!lastBlockRect) return
+  if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right
+    && event.clientY > (lastBlockRect as DOMRect).bottom) {
+      insertBlock(props.page.blocks.length-1)
+    }
 })
 
 const dragOptions = {
