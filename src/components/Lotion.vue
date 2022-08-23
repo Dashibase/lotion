@@ -90,7 +90,15 @@ document.addEventListener('mousedown', (event:MouseEvent) => {
   if (!lastBlockRect) return
   if (event.clientX > (lastBlockRect as DOMRect).left && event.clientX < (lastBlockRect as DOMRect).right
     && event.clientY > (lastBlockRect as DOMRect).bottom) {
-      insertBlock(props.page.blocks.length-1)
+      const lastBlock = props.page.blocks[props.page.blocks.length-1]
+      const lastBlockComponent = blockElements.value[props.page.blocks.length-1]
+      if (lastBlock.type === BlockType.Text && lastBlockComponent.getTextContent() === '') {
+        // If last block is empty Text, focus on last block
+        setTimeout(lastBlockComponent.moveToEnd)
+      } else {
+        // Otherwise add new empty Text block
+        insertBlock(props.page.blocks.length-1)
+      }
     }
 })
 
@@ -121,7 +129,7 @@ function insertBlock (blockIdx: number) {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '',
+      value: '<p></p>',
     },
   })
   setTimeout(() => {
