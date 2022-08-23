@@ -136,6 +136,7 @@ describe('Block.vue', () => {
       props: {
         block: {
           type: BlockType.Divider,
+          details: {},
         } as Block,
       },
     })

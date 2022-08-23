@@ -118,7 +118,7 @@ const dragOptions = {
   animation: 150,
   group: 'blocks',
   disabled: false,
-  ghostClass: 'ghost',
+  ghostClass: 'lotion-ghost',
 }
 
 onBeforeUpdate(() => {
@@ -166,7 +166,7 @@ async function setBlockType (blockIdx: number, type: BlockType) {
   if (blockElements.value[blockIdx].content.onUnset) {
     blockElements.value[blockIdx].content.onUnset()
   }
-  props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
+  // props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
   props.page.blocks[blockIdx].type = type
   if (type === BlockType.Divider) {
     props.page.blocks[blockIdx].details = {}

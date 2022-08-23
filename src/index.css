@@ -3,13 +3,19 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+.lotion * {
   border-width: 0;
 }
 
-[contenteditable='true']:focus-visible,
-[contenteditable='true']:focus {
+.lotion [contenteditable='true']:focus-visible,
+.lotion [contenteditable='true']:focus {
   outline: none;
+}
+
+.lotion [contenteditable]:empty:after {
+  content: attr(data-ph);
+  color: rgba(0, 0, 0, 0.2);
+  cursor: text;
 }
 
 .lotion * {
@@ -26,18 +32,12 @@ pre.lotion-md {
   font-size: 1em;
 }
 
-[contenteditable]:empty:after {
-  content: attr(data-ph);
-  color: rgba(0, 0, 0, 0.2);
-  cursor: text;
-}
-
-.ghost {
+.lotion-ghost {
   opacity: 1;
   background: #F5F5F5;
 }
 
-.ProseMirror:focus p.is-editor-empty:first-child::before {
+.lotion .ProseMirror:focus p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
   color: #adb5bd;

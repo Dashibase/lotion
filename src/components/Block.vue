@@ -473,31 +473,31 @@ function parseMarkdown (event:KeyboardEvent) {
 }
 
 function setBlockType (blockType: BlockType, searchTermLength: number, openedWithSlash: boolean = false) {
-  clearSearch(searchTermLength, openedWithSlash)
-    .then(() => emit('setBlockType', blockType))
+  clearSearch(searchTermLength, blockType, openedWithSlash)
+    .then(caretPos => {
+      emit('setBlockType', blockType)
+      setTimeout(() => setCaretPos(caretPos))
+    })
 }
 
-async function clearSearch (searchTermLength: number, openedWithSlash: boolean = false) {
+async function clearSearch (searchTermLength: number, newBlockType: BlockType, openedWithSlash: boolean = false) {
   // If openedWithSlash, searchTermLength = 0 but we still need to clear
   if (searchTermLength < 1 && !openedWithSlash) 
     return
   const pos = getCaretPosWithoutTags().pos
   const startIdx = pos - searchTermLength - 1
   const endIdx = pos
-  await new Promise<void>(resolve => {
+  return new Promise<void>(resolve => {
     setTimeout(() => {
       const originalText = (content.value as any).$el.innerText
       if (!originalText) return
       props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
-      if (props.block.type === BlockType.Text) {
+      if (newBlockType === BlockType.Text) {
         props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
       } else {
         (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
       }
-      setTimeout(() => {
-        setCaretPos(startIdx)
-        resolve()
-      })
+      resolve(startIdx)
     })
   })
 }
