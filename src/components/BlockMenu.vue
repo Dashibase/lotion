@@ -40,9 +40,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, PropType } from 'vue'
 import Fuse from 'fuse.js'
-import { BlockType } from '@/utils/types'
+import { BlockType, availableBlockTypes } from '@/utils/types'
 import Tooltip from './elements/Tooltip.vue'
-import { turnIntoOptions } from '@/utils/menu'
 
 const props = defineProps({
   blockTypes: {
@@ -123,13 +122,13 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
 Menu options
 */
 
-const fuzzySearch = new Fuse(turnIntoOptions, {
+const fuzzySearch = new Fuse(availableBlockTypes, {
   keys: ['label']
 })
 
 const options = computed(() => {
   const options = searchTerm.value === ''
-    ? turnIntoOptions
+    ? availableBlockTypes
     : fuzzySearch.search(searchTerm.value).map(result => result.item)
   if (props.blockTypes) return options.filter(option => props.blockTypes?.includes(option.blockType))
   else return options

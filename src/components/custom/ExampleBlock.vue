@@ -17,7 +17,12 @@ function onSet () {
   props.block.details = {}
 }
 
+function onUnset () {
+  props.block.details.value = 'Moisturized'
+}
+
 defineExpose({
   onSet,
+  onUnset,
 })
 </script>

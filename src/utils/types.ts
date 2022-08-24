@@ -38,3 +38,37 @@ export const textBlockMap = [BlockType.Text, BlockType.Quote]
 export const isTextBlock = (type: string) => {
   return textBlockMap.some(textBlock => textBlock === type)
 }
+
+export const availableBlockTypes = [
+  {
+    type: 'Turn into',
+    icon: 'bi-text-left',
+    label: 'Text',
+    blockType: BlockType.Text,
+  }, {
+    type: 'Turn into',
+    icon: 'bi-type-h1',
+    label: 'Heading 1',
+    blockType: BlockType.H1,
+  }, {
+    type: 'Turn into',
+    icon: 'bi-type-h2',
+    label: 'Heading 2',
+    blockType: BlockType.H2,
+  }, {
+    type: 'Turn into',
+    icon: 'bi-type-h3',
+    label: 'Heading 3',
+    blockType: BlockType.H3,
+  }, {
+    type: 'Turn into',
+    icon: 'bi-hr',
+    label: 'Divider',
+    blockType: BlockType.Divider,
+  }, {
+    type: 'Turn into',
+    icon: 'bi-quote',
+    label: 'Quote',
+    blockType: BlockType.Quote,
+  },
+] as { type:string, icon:string, label:string, blockType:BlockType|string}[]
