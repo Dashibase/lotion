@@ -49,13 +49,13 @@ const emit = defineEmits([
 ])
 
 const open = ref(false)
-const openedWithSlash = ref(false)
+let openedWithSlash = false
 const container = ref<HTMLDivElement|null>(null)
 const menu = ref<HTMLDivElement|null>(null)
 
 watch(open, isOpen => {
   if (!isOpen) {
-    openedWithSlash.value = false
+    openedWithSlash = false
   }
 })
 
@@ -162,8 +162,8 @@ const options = computed(() => {
 })
 
 function setBlockType (blockType:BlockType) {
-  if (searchTerm.value.length > 0 || openedWithSlash.value)
-    emit('clearSearch', searchTerm.value.length, openedWithSlash.value)
+  if (searchTerm.value.length > 0 || openedWithSlash)
+    emit('clearSearch', searchTerm.value.length, openedWithSlash)
   emit('setBlockType', blockType)
 
   searchTerm.value = ''
@@ -172,6 +172,5 @@ function setBlockType (blockType:BlockType) {
 
 defineExpose({
   open,
-  openedWithSlash,
 })
 </script>
