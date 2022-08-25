@@ -172,5 +172,6 @@ function setBlockType (blockType:BlockType) {
 
 defineExpose({
   open,
+  openedWithSlash,
 })
 </script>
