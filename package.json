@@ -8,6 +8,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "test:unit": "vitest",
+    "coverage:unit": "vitest run --coverage",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "@types/sortablejs": "^1.13.0",
     "@types/uuid": "^8.3.4",
     "@vitejs/plugin-vue": "^3.0.0",
+    "@vitest/coverage-c8": "^0.22.1",
     "@vue/test-utils": "^2.0.2",
     "autoprefixer": "^10.4.7",
     "happy-dom": "^6.0.4",
