@@ -476,17 +476,18 @@ function setBlockType (blockType: BlockType, searchTermLength: number, openedWit
   clearSearch(searchTermLength, blockType, openedWithSlash)
     .then(caretPos => {
       emit('setBlockType', blockType)
-      setTimeout(() => setCaretPos(caretPos))
+      setTimeout(() => {
+        if (searchTermLength < 1 && !openedWithSlash) moveToEnd()
+        else setCaretPos(caretPos)
+      })
     })
 }
 
 async function clearSearch (searchTermLength: number, newBlockType: BlockType, openedWithSlash: boolean = false) {
   // If openedWithSlash, searchTermLength = 0 but we still need to clear
-  if (searchTermLength < 1 && !openedWithSlash) 
-    return
   const pos = getCaretPosWithoutTags().pos
-  const startIdx = pos - searchTermLength - 1
-  const endIdx = pos
+  let startIdx = pos - searchTermLength - 1
+  let endIdx = pos
   return new Promise<void>(resolve => {
     setTimeout(() => {
       const originalText = (content.value as any).$el.innerText

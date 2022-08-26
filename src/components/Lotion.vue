@@ -52,11 +52,14 @@ const props = defineProps({
 })
 
 const editor = ref<HTMLDivElement|null>(null)
-document.addEventListener('mousedown', (event:MouseEvent) => {
+document.addEventListener('mouseup', (event:MouseEvent) => {
   // Automatically focus on nearest block on click
   const blocks = document.getElementById('blocks')
   const title = document.getElementById('title')
   const editorRect = editor.value?.getClientRects()[0]
+  if (!blocks || !title || !editorRect) {
+    return
+  }
   // Check that click is outside Editor
   if ((event.clientX < ((editorRect as DOMRect).left || -1)) || (event.clientX > (editorRect?.right || window.innerWidth))) {
     // Focus on title
@@ -133,6 +136,7 @@ const blockElements = ref<typeof BlockComponent[]>([])
 
 function scrollIntoView () {
   const selection = window.getSelection()
+  if (!selection || !selection.anchorNode) return
   if (selection?.anchorNode?.nodeType === Node.ELEMENT_NODE) {
     (selection?.anchorNode as HTMLElement).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
   } else {
