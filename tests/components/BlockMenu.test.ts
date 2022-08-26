@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import { documentKeydown, documentClick } from '../utils/vitest'
 import { describe, it, expect } from 'vitest' 
 import BlockMenu from '@/components/BlockMenu.vue'
-import { Block, BlockType } from '@/utils/types'
 
 describe('BlockMenu.vue', () => {
 
@@ -105,5 +104,15 @@ describe('BlockMenu.vue', () => {
     documentKeydown('Enter')
     expect(wrapper.vm.open).toBe(false)
     expect(wrapper.vm.searchTerm).toBe('')
+  })
+
+  it('should emit setBlockType', async () => {
+    const wrapper = mount(BlockMenu, {
+      props: {
+        blockTypes: ['TEXT', 'QUOTE'],
+      }
+    })
+    wrapper.vm.setBlockType('TEXT')
+    expect(wrapper.emitted().setBlockType[0]).toEqual(['TEXT', 0, false])
   })
 })
