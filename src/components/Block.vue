@@ -182,6 +182,7 @@ function atLastChar () {
   const coord = getCaretCoordinates()
   return coord?.x === endCoord.x && coord?.y === endCoord.y
 }
+
 function atFirstLine () {
   const startCoord = getStartCoordinates()
   const coord = getCaretCoordinates()
@@ -442,7 +443,7 @@ function parseMarkdown (event:KeyboardEvent) {
     [BlockType.H2]: /^##\s(.*)$/,
     [BlockType.H3]: /^###\s(.*)$/,
     [BlockType.Quote]: /^>\s(.*)$/,
-    [BlockType.Divider]: /^---$/
+    [BlockType.Divider]: /^---\s$/
   }
 
   const handleMarkdownContent = (blockType: keyof typeof markdownRegexpMap) => {
@@ -461,7 +462,7 @@ function parseMarkdown (event:KeyboardEvent) {
     handleMarkdownContent(BlockType.H3)
   } else if (textContent.match(markdownRegexpMap[BlockType.Quote]) && event.key === ' ') {
     handleMarkdownContent(BlockType.Quote)
-  } else if (textContent.match(markdownRegexpMap[BlockType.Divider])) {
+  } else if (textContent.match(markdownRegexpMap[BlockType.Divider]) && event.key === ' ') {
     handleMarkdownContent(BlockType.Divider)
     props.block.details.value = ''
   } else if (event.key === '/') {
@@ -488,7 +489,7 @@ async function clearSearch (searchTermLength: number, newBlockType: BlockType, o
   const pos = getCaretPosWithoutTags().pos
   let startIdx = pos - searchTermLength - 1
   let endIdx = pos
-  return new Promise<void>(resolve => {
+  return new Promise<number>(resolve => {
     setTimeout(() => {
       const originalText = (content.value as any).$el.innerText
       if (!originalText) return

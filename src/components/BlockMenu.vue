@@ -7,12 +7,12 @@
           :class="open ? 'opacity-100' : ''" />
       </Tooltip>
     </div>
-    <div v-show="open">
+    <div v-show="open" class="block-menu">
       <div ref="menu"
         class="w-[10rem] lg:w-[12rem] xl:w-[16rem] absolute z-10 shadow-block rounded py-1 text-neutral-700 text-sm right-full bg-white max-h-[24rem] overflow-auto focus-visible:outline-none top-0">
         <div class="text-left divide-y">
           <!-- Search term -->
-          <div v-if="searchTerm" class="px-2 py-2 flex gap-2 w-full">
+          <div v-if="searchTerm" class="block-menu-search px-2 py-2 flex gap-2 w-full">
             <v-icon name="hi-solid-search" class="w-4 shrink-0" />
             <div class="truncate">
               {{ searchTerm }}
@@ -82,6 +82,7 @@ Support keyboard navigation
 */
 const active = ref(0)
 const searchTerm = ref('')
+
 document.addEventListener('keydown', (event:KeyboardEvent) => {
   if (!open.value) return
   if (['ArrowUp', 'ArrowDown'].includes(event.key)) {

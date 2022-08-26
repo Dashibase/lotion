@@ -8,8 +8,8 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "test:unit": "vitest",
-    "coverage:unit": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "coverage": "vitest run --coverage",
     "build-bundle": "vite build --mode library && npx tailwind -c ./tailwind.config.cjs -i ./src/index.css -o lib/style.css"
   },
   "dependencies": {
