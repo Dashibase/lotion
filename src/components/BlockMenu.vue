@@ -24,6 +24,7 @@
             <div v-for="option, i in options.filter(option => option.type === 'Turn into')"
               class="px-2 py-1 rounded flex items-center gap-2"
               :class="[active === (i + options.filter(option => option.type !== 'Turn into').length) ? 'bg-neutral-100' : '']"
+              @mousedown.stop="option.callback"
               @click="$event.stopPropagation(); setBlockType(option.blockType);"
               @mouseup="$event.stopPropagation()"
               @mouseover="active = (i + options.filter(option => option.type !== 'Turn into').length)">
