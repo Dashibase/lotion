@@ -1,5 +1,5 @@
 {
-  "name": "@octarin/lotion",
+  "name": "@dashibase/lotion",
   "version": "0.1.0",
   "type": "module",
   "main": "lib/lotion.js",
