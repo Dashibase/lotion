@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { BlockType } from '../utils/testTypes.ts'
-import { repeatKey, isBlockType } from '../utils/helpers.ts'
+import { repeatKey, isBlockType } from '../utils/playwright.ts'
 
 test('basic typing and editing should work', async ({ page }) => {
   await page.goto('/')

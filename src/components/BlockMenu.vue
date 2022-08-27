@@ -7,12 +7,12 @@
           :class="open ? 'opacity-100' : ''" />
       </Tooltip>
     </div>
-    <div v-show="open">
+    <div v-show="open" class="block-menu">
       <div ref="menu"
         class="w-[10rem] lg:w-[12rem] xl:w-[16rem] absolute z-10 shadow-block rounded py-1 text-neutral-700 text-sm right-full bg-white max-h-[24rem] overflow-auto focus-visible:outline-none top-0">
         <div class="text-left divide-y">
           <!-- Search term -->
-          <div v-if="searchTerm" class="px-2 py-2 flex gap-2 w-full">
+          <div v-if="searchTerm" class="block-menu-search px-2 py-2 flex gap-2 w-full">
             <v-icon name="hi-solid-search" class="w-4 shrink-0" />
             <div class="truncate">
               {{ searchTerm }}
@@ -24,7 +24,8 @@
             <div v-for="option, i in options.filter(option => option.type === 'Turn into')"
               class="px-2 py-1 rounded flex items-center gap-2"
               :class="[active === (i + options.filter(option => option.type !== 'Turn into').length) ? 'bg-neutral-100' : '']"
-              @mousedown.stop="option.callback"
+              @click.stop="setBlockType(option.blockType);"
+              @mouseup.stop="() => {}"
               @mouseover="active = (i + options.filter(option => option.type !== 'Turn into').length)">
               <v-icon v-if="option.icon"
                 :name="option.icon" class="w-5 h-5"/>
@@ -38,10 +39,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, PropType } from 'vue'
 import Fuse from 'fuse.js'
-import { BlockType } from '@/utils/types'
+import { BlockType, availableBlockTypes } from '@/utils/types'
 import Tooltip from './elements/Tooltip.vue'
+
+const props = defineProps({
+  blockTypes: {
+    type: Object as PropType<null|(string|BlockType)[]>,
+    default: null,
+  },
+})
 
 const emit = defineEmits([
   'setBlockType',
@@ -74,6 +82,7 @@ Support keyboard navigation
 */
 const active = ref(0)
 const searchTerm = ref('')
+
 document.addEventListener('keydown', (event:KeyboardEvent) => {
   if (!open.value) return
   if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
@@ -93,8 +102,7 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
   } else if (event.key === 'Enter') {
     // Enter selects menu option
     event.preventDefault()
-    const callback = options.value[active.value].callback
-    if (callback) callback()
+    setBlockType(options.value[active.value].blockType)
   } else if (event.key === 'Escape') {
     // Escape closes menu
     open.value = false
@@ -116,55 +124,22 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
 Menu options
 */
 
-const defaultOptions = [
-  {
-    type: 'Turn into',
-    icon: 'bi-text-left',
-    label: 'Text',
-    callback: () => setBlockType(BlockType.Text),
-  }, {
-    type: 'Turn into',
-    icon: 'bi-type-h1',
-    label: 'Heading 1',
-    callback: () => setBlockType(BlockType.H1),
-  }, {
-    type: 'Turn into',
-    icon: 'bi-type-h2',
-    label: 'Heading 2',
-    callback: () => setBlockType(BlockType.H2),
-  }, {
-    type: 'Turn into',
-    icon: 'bi-type-h3',
-    label: 'Heading 3',
-    callback: () => setBlockType(BlockType.H3),
-  }, {
-    type: 'Turn into',
-    icon: 'bi-hr',
-    label: 'Divider',
-    callback: () => setBlockType(BlockType.Divider),
-  },
-  {
-    type: 'Turn into',
-    icon: 'bi-quote',
-    label: 'Quote',
-    callback: () => setBlockType(BlockType.Quote),
-  },
-]
-
-const fuzzySearch = new Fuse(defaultOptions, {
+const fuzzySearch = new Fuse(availableBlockTypes, {
   keys: ['label']
 })
 
 const options = computed(() => {
-  return searchTerm.value === ''
-    ? defaultOptions
+  const options = searchTerm.value === ''
+    ? availableBlockTypes
     : fuzzySearch.search(searchTerm.value).map(result => result.item)
+  if (props.blockTypes) return options.filter(option => props.blockTypes?.includes(option.blockType))
+  else return options
 })
 
-function setBlockType (blockType:BlockType) {
-  if (searchTerm.value.length > 0 || openedWithSlash)
-    emit('clearSearch', searchTerm.value.length, openedWithSlash)
-  emit('setBlockType', blockType)
+
+
+function setBlockType (blockType:BlockType|string) {
+  emit('setBlockType', blockType, searchTerm.value.length, openedWithSlash)
 
   searchTerm.value = ''
   open.value = false

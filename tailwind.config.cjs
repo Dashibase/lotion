@@ -4,6 +4,7 @@ const plugin = require('tailwindcss/plugin')
 
 
 module.exports = {
+  prefix: '',
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
@@ -25,6 +26,9 @@ module.exports = {
       }
     },
     groups: ['tooltip'],
+  },
+  corePlugins: {
+    preflight: false,
   },
   plugins: [
     plugin(({ addVariant, theme }) => {

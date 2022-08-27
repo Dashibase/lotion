@@ -1,7 +1,9 @@
 <template>
-  <div class="w-[65ch] mx-auto my-24" ref="editor">
-    <h1 id="title" contenteditable="true" spellcheck="false" data-ph="Untitled" @blur="props.page.name=($event.target as HTMLElement).innerText.replace('\n', '')"
-      class="px-4 sm:px-0 focus:outline-none focus-visible:outline-none text-5xl font-bold mb-12"
+  <div class="lotion w-[65ch] mx-auto my-24 font-sans text-base" v-if="props.page" ref="editor">
+    <h1 id="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
+      @keydown.enter="$event.preventDefault()"
+      @blur="props.page.name=($event.target as HTMLElement).innerText.replace('\n', '')"
+      class="focus:outline-none focus-visible:outline-none text-5xl font-bold mb-12"
       :class="props.page.name ? '' : 'empty'">
       {{ props.page.name || '' }}
     </h1>
@@ -9,6 +11,8 @@
       v-bind="dragOptions" class="-ml-24 space-y-2 pb-4">
       <transition-group type="transition">
         <BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i" :id="'block-'+block.id"
+          :blockTypes="props.blockTypes"
+          :readonly="props.readonly"
           :ref="el => blockElements[i] = (el as unknown as typeof Block)"
           @deleteBlock="deleteBlock(i)"
           @newBlock="insertBlock(i)"
@@ -28,23 +32,35 @@
 <script setup lang="ts">
 import { ref, onBeforeUpdate, PropType } from 'vue'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
+import { v4 as uuidv4 } from 'uuid'
 import { Block, BlockType, isTextBlock } from '@/utils/types'
+import { htmlToMarkdown } from '@/utils/utils'
 import BlockComponent from './Block.vue'
-import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
   page: {
     type: Object as PropType<{ name:string, blocks:Block[] }>,
     required: true,
-  }
+  },
+  blockTypes: {
+    type: Object as PropType<null|(string|BlockType)[]>,
+    default: null,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const editor = ref<HTMLDivElement|null>(null)
-document.addEventListener('mousedown', (event:MouseEvent) => {
+document.addEventListener('mouseup', (event:MouseEvent) => {
   // Automatically focus on nearest block on click
   const blocks = document.getElementById('blocks')
   const title = document.getElementById('title')
   const editorRect = editor.value?.getClientRects()[0]
+  if (!blocks || !title || !editorRect) {
+    return
+  }
   // Check that click is outside Editor
   if ((event.clientX < ((editorRect as DOMRect).left || -1)) || (event.clientX > (editorRect?.right || window.innerWidth))) {
     // Focus on title
@@ -106,7 +122,7 @@ const dragOptions = {
   animation: 150,
   group: 'blocks',
   disabled: false,
-  ghostClass: 'ghost',
+  ghostClass: 'lotion-ghost',
 }
 
 onBeforeUpdate(() => {
@@ -117,6 +133,7 @@ const blockElements = ref<typeof BlockComponent[]>([])
 
 function scrollIntoView () {
   const selection = window.getSelection()
+  if (!selection || !selection.anchorNode) return
   if (selection?.anchorNode?.nodeType === Node.ELEMENT_NODE) {
     (selection?.anchorNode as HTMLElement).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
   } else {
@@ -129,7 +146,7 @@ function insertBlock (blockIdx: number) {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p></p>',
+      value: '',
     },
   })
   setTimeout(() => {
@@ -146,13 +163,21 @@ function deleteBlock (blockIdx: number) {
   }
 }
 
-function setBlockType (blockIdx: number, type: BlockType) {
-  props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
+async function setBlockType (blockIdx: number, type: BlockType) {
+  if (blockElements.value[blockIdx].content.onUnset) {
+    blockElements.value[blockIdx].content.onUnset()
+  }
   props.page.blocks[blockIdx].type = type
   if (type === BlockType.Divider) {
     props.page.blocks[blockIdx].details = {}
     insertBlock(blockIdx)
-  } else setTimeout(() => blockElements.value[blockIdx].moveToEnd())
+  } else setTimeout(() => {
+    if (blockElements.value[blockIdx].content.onSet) {
+      blockElements.value[blockIdx].content.onSet()
+    } else {
+      blockElements.value[blockIdx].moveToEnd()
+    }
+  })
 }
 
 function merge (blockIdx: number) {
@@ -171,7 +196,8 @@ function merge (blockIdx: number) {
 
   if (isTextBlock(props.page.blocks[blockIdx-1].type)) {
     const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
-    props.page.blocks[blockIdx-1].details.value = ('<p>' + (props.page.blocks[blockIdx-1] as any).details.value.replace('<p>', '').replace('</p>', '') + blockElements.value[blockIdx].getHtmlContent().replaceAll(/\<br.*?\>/g, '').replace('<p>', '').replace('</p>', '') + '</p>').replace('</strong><strong>', '').replace('</em><em>', '')
+    // props.page.blocks[blockIdx-1].details.value = ('<p>' + (props.page.blocks[blockIdx-1] as any).details.value.replace('<p>', '').replace('</p>', '') + blockElements.value[blockIdx].getHtmlContent().replaceAll(/\<br.*?\>/g, '').replace('<p>', '').replace('</p>', '') + '</p>').replace('</strong><strong>', '').replace('</em><em>', '')
+    props.page.blocks[blockIdx-1].details.value = (props.page.blocks[blockIdx-1] as any).details.value + (props.page.blocks[blockIdx] as any).details.value
     setTimeout(() => {
       blockElements.value[blockIdx-1].setCaretPos(prevBlockContentLength)
       props.page.blocks.splice(blockIdx, 1)
@@ -192,12 +218,9 @@ function merge (blockIdx: number) {
 function split (blockIdx: number) {
   const caretPos = blockElements.value[blockIdx].getCaretPos()
   insertBlock(blockIdx)
-  props.page.blocks[blockIdx+1].details.value = (caretPos.tag ? `<p><${caretPos.tag}>` : '<p>') + props.page.blocks[blockIdx].details.value?.slice(caretPos.pos)
-  if (isTextBlock(props.page.blocks[blockIdx].type)) {
-    props.page.blocks[blockIdx].details.value = props.page.blocks[blockIdx].details.value?.slice(0, caretPos.pos) + (caretPos.tag ? `</${caretPos.tag}></p>` : '</p>')
-  } else {
-    props.page.blocks[blockIdx].details.value = props.page.blocks[blockIdx].details.value?.slice(0, caretPos.pos) + (caretPos.tag ? `</${caretPos.tag}></p>` : '')
-  }
+  const htmlValue = blockElements.value[blockIdx].getHtmlContent()
+  props.page.blocks[blockIdx+1].details.value = htmlToMarkdown((caretPos.tag ? `<${caretPos.tag}>` : '') + (htmlValue ? htmlValue?.slice(caretPos.pos) : ''))
+  props.page.blocks[blockIdx].details.value = htmlToMarkdown((htmlValue ? htmlValue?.slice(0, caretPos.pos) : '') + (caretPos.tag ? `</${caretPos.tag}>` : ''))
   setTimeout(() => blockElements.value[blockIdx+1].moveToStart())
 }
 </script>

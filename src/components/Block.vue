@@ -5,11 +5,13 @@
       'pt-12 first:pt-0': block.type === BlockType.H1,
       'pt-4 first:pt-0': block.type === BlockType.H2,
     }">
-    <div class="h-full px-2 pl-4 py-1.5 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
+    <div class="h-full pl-4 pr-2 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
       :class="{
+        'invisible': props.readonly,
         'py-3.5': block.type === BlockType.H1,
         'py-3': block.type === BlockType.H2,
         'py-2.5': block.type === BlockType.H3,
+        'py-1.5': ![BlockType.H1, BlockType.H2, BlockType.H3].includes(block.type),
       }">
       <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to delete block</span>">
         <v-icon name="hi-trash" @click="emit('deleteBlock')"
@@ -20,14 +22,14 @@
           class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
       </Tooltip>
       <BlockMenu ref="menu"
-        @setBlockType="type => emit('setBlockType', type)"
-        @clearSearch="clearSearch"
+        @setBlockType="setBlockType"
+        :blockTypes="props.block.details.blockTypes || props.blockTypes"
         />
     </div>
-    <div class="w-full relative" :class="{ 'px-4 sm:px-0': block.type !== BlockType.Divider }">
+    <div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
       <!-- Actual content -->
       <component :is="BlockComponents[props.block.type]" ref="content"
-        :block="block"
+        :block="block" :readonly="props.readonly"
         @keydown.capture="keyDownHandler"
         @keyup="parseMarkdown" />
     </div>
@@ -46,9 +48,17 @@ const props = defineProps({
     default: {
       type: BlockType.Text,
       details: {
-        value: '<p>Hello World</p>',
+        value: 'Hello World',
       },
     },
+  },
+  blockTypes: {
+    type: Object as PropType<null|(string|BlockType)[]>,
+    default: null,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -172,6 +182,7 @@ function atLastChar () {
   const coord = getCaretCoordinates()
   return coord?.x === endCoord.x && coord?.y === endCoord.y
 }
+
 function atFirstLine () {
   const startCoord = getStartCoordinates()
   const coord = getCaretCoordinates()
@@ -323,7 +334,7 @@ function getCaretPos () {
         else offset += node.textContent.length
         offsetNode = node
       }
-      return { pos: offset + selection.anchorOffset + (selectedNode?.parentElement?.tagName === 'P' ? 3 : 0), tag }
+      return { pos: offset + selection.anchorOffset, tag }
     } else {
       return { pos: selection.anchorOffset }
     }
@@ -432,7 +443,7 @@ function parseMarkdown (event:KeyboardEvent) {
     [BlockType.H2]: /^##\s(.*)$/,
     [BlockType.H3]: /^###\s(.*)$/,
     [BlockType.Quote]: /^>\s(.*)$/,
-    [BlockType.Divider]: /^---$/
+    [BlockType.Divider]: /^---\s$/
   }
 
   const handleMarkdownContent = (blockType: keyof typeof markdownRegexpMap) => {
@@ -451,7 +462,7 @@ function parseMarkdown (event:KeyboardEvent) {
     handleMarkdownContent(BlockType.H3)
   } else if (textContent.match(markdownRegexpMap[BlockType.Quote]) && event.key === ' ') {
     handleMarkdownContent(BlockType.Quote)
-  } else if (textContent.match(markdownRegexpMap[BlockType.Divider])) {
+  } else if (textContent.match(markdownRegexpMap[BlockType.Divider]) && event.key === ' ') {
     handleMarkdownContent(BlockType.Divider)
     props.block.details.value = ''
   } else if (event.key === '/') {
@@ -462,22 +473,34 @@ function parseMarkdown (event:KeyboardEvent) {
   }
 }
 
-function clearSearch (searchTermLength: number, openedWithSlash: boolean = false) {
+function setBlockType (blockType: BlockType, searchTermLength: number, openedWithSlash: boolean = false) {
+  clearSearch(searchTermLength, blockType, openedWithSlash)
+    .then(caretPos => {
+      emit('setBlockType', blockType)
+      setTimeout(() => {
+        if (searchTermLength < 1 && !openedWithSlash) moveToEnd()
+        else setCaretPos(caretPos)
+      })
+    })
+}
+
+async function clearSearch (searchTermLength: number, newBlockType: BlockType, openedWithSlash: boolean = false) {
   // If openedWithSlash, searchTermLength = 0 but we still need to clear
-  if (searchTermLength < 1 && !openedWithSlash) 
-    return
   const pos = getCaretPosWithoutTags().pos
-  const startIdx = pos - searchTermLength - 1
-  const endIdx = pos
-  setTimeout(() => {
-    const originalText = (content.value as any).$el.innerText
-    props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
-    if (isTextBlock(props.block.type)) {
-      props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
-    } else {
-      (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
-    }
-    setTimeout(() => setCaretPos(startIdx))
+  let startIdx = pos - (searchTermLength ? searchTermLength + 1 : 0)
+  let endIdx = pos
+  return new Promise<number>(resolve => {
+    setTimeout(() => {
+      const originalText = (content.value as any).$el.innerText
+      if (!originalText) return
+      props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
+      if (newBlockType === BlockType.Text) {
+        props.block.details.value = `${originalText.substring(0, startIdx) + originalText.substring(endIdx)}`
+      } else {
+        (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
+      }
+      resolve(startIdx)
+    })
   })
 }
 

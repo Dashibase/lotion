@@ -12,5 +12,9 @@ const props = defineProps({
     type: Object as PropType<Block>,
     required: true,
   },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
 })
 </script>

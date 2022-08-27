@@ -1,6 +1,6 @@
 <template>
   <div ref="content"
-    contenteditable spellcheck="false"
+    :contenteditable="!props.readonly" spellcheck="false"
     @blur="props.block.details.value=content?.innerText"
     class="focus:outline-none focus-visible:outline-none w-full py-1.5 font-semibold"
     :class="headingConfig[props.block.type]?.class"
@@ -37,6 +37,10 @@ const props = defineProps({
   block: {
     type: Object as PropType<Block>,
     required: true,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
 })
 
