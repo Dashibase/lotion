@@ -1,10 +1,14 @@
 <template>
+  <div class="fixed bottom-4 right-4 bg-neutral-800 font-sans text-white px-4 rounded-lg py-2">
+    <input type="checkbox" v-model="readonly" class="mr-2" />
+    <label for="checkbox">Read-only</label>
+  </div>
   <div class="flex">
     <div class="sticky top-0 h-screen overflow-y-auto bg-neutral-50">
       <Markdown :page="page" />
     </div>
     <div class="shrink-0 px-24 min-w-[50%] mx-auto box-border">
-      <Lotion :page="page" />
+      <Lotion :page="page" :readonly="readonly" />
     </div>
   </div>
 </template>
@@ -24,6 +28,8 @@ import { v4 as uuidv4 } from 'uuid'
 // import CustomBlock from '../../examples/CustomBlock.vue'
 // addIcons(FaPumpSoap)
 // registerBlock('LOTION', 'Moisturize', CustomBlock, 'fa-pump-soap')
+
+const readonly = ref(false)
 
 const page = ref({
   name: '🧴 Lotion',

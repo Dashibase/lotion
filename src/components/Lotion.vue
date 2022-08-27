@@ -128,11 +128,7 @@ onBeforeUpdate(() => {
   blockElements.value = []
 })
 
-// const innerPage = ref<any>(null)
 const blockElements = ref<typeof BlockComponent[]>([])
-// const changed = computed(() => {
-//   return JSON.stringify(innerPage.value) !== JSON.stringify(props.page)
-// })
 
 function scrollIntoView () {
   const selection = window.getSelection()
@@ -170,7 +166,6 @@ async function setBlockType (blockIdx: number, type: BlockType) {
   if (blockElements.value[blockIdx].content.onUnset) {
     blockElements.value[blockIdx].content.onUnset()
   }
-  // props.page.blocks[blockIdx].details.value = blockElements.value[blockIdx].getTextContent()
   props.page.blocks[blockIdx].type = type
   if (type === BlockType.Divider) {
     props.page.blocks[blockIdx].details = {}
@@ -229,13 +224,4 @@ function split (blockIdx: number) {
   }
   setTimeout(() => blockElements.value[blockIdx+1].moveToStart())
 }
-
-// onMounted(() => {
-//   innerPage.value = JSON.parse(JSON.stringify(props.page))
-// })
-
-// defineExpose({
-//   changed,
-//   innerPage,
-// })
 </script>
