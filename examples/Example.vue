@@ -18,7 +18,7 @@ const page = ref({
     id: uuidv4(),
     type: 'TEXT',
     details: {
-      value: '<p>Hello, World!</p>'
+      value: 'Hello, World!'
     },
   }],
 })

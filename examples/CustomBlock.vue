@@ -24,7 +24,6 @@ function onSet () {
   alert('Moisturizing...')
 }
 
-
 // This is triggered when a user converts this block into any other block
 // It is called before the blocktype is changed
 function onUnset () {

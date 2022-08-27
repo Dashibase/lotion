@@ -65,15 +65,58 @@ const page = ref({
 </script>
 ```
 
-**3. Register custom components**
+**3. Create custom components**
 
 See `examples/CustomBlock.vue` for an example of a custom block.
 
-The custom block component should accept a `block` prop, which is of a `Block` class. See `src/utils/types.ts` for details.
+The custom block component can accept the following props:
+- `block`: A `Block` object. See `src/utils/types.ts` for details.
+- `readonly`: A boolean, which sets whether the block/editor is in read-only mode.
 
-The custom block component can also optionally expose the following methods:
+The custom block component can also optionally expose the following methods (remember to call `defineExpose`):
 - `onSet`: This is triggered when a user converts any block into this blocktype. It is called before the blocktype is changed.
 - `onUnset`: This is triggered when a user converts this block into any blocktype. It is called before the blocktype is changed.
+
+```javascript
+<template>
+  <div>
+    🧴
+  </div>
+</template>
+<script setup lang="ts">
+import { PropType } from 'vue'
+import { types } from '../src'
+
+const props = defineProps({
+  block: {
+    type: Object as PropType<types.Block>,
+    required: true,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+function onSet () {
+  alert('Moisturizing...')
+}
+
+function onUnset () {
+  alert('Moisturized!')
+}
+
+defineExpose({
+  onSet,
+  onUnset,
+})
+</script>
+
+```
+
+**4. Register custom components**
+
+See `examples/Example.vue` for an example of registering a custom block.
 
 After creating the custom component, register it as follows:
 
