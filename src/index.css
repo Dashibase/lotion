@@ -3,8 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
-.lotion * {
+* {
   border-width: 0;
+  box-sizing: border-box;
 }
 
 .lotion [contenteditable='true']:focus-visible,
@@ -16,10 +17,6 @@
   content: attr(data-ph);
   color: rgba(0, 0, 0, 0.2);
   cursor: text;
-}
-
-.lotion * {
-  box-sizing: border-box;
 }
 
 .lotion p,
