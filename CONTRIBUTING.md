@@ -7,6 +7,7 @@ Thank you for your interest in Dashibase! Before you begin, be sure to check out
 Dashibase is written with the following frameworks and tools:
 
 - [Vue 3](https://vuejs.org/)
+- [Vite](https://vitejs.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Headless UI](https://headlessui.dev/)
