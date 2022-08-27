@@ -1,9 +1,13 @@
 {
   "name": "@dashibase/lotion",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "main": "lib/lotion.js",
   "types": "types/src/index.d.ts",
+  "files": [
+    "lib/",
+    "types/src/*"
+  ],
   "keywords": [
     "vue",
     "notion",
