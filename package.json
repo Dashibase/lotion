@@ -3,6 +3,13 @@
   "version": "0.1.2",
   "type": "module",
   "main": "lib/lotion.js",
+  "types": "types/src/index.d.ts",
+  "keywords": [
+    "vue",
+    "notion",
+    "editor",
+    "markdown"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -10,7 +17,7 @@
     "test:unit": "vitest",
     "test:e2e": "playwright test",
     "coverage": "vitest run --coverage",
-    "build-bundle": "vite build --mode library && npx tailwind -c ./tailwind.config.cjs -i ./src/index.css -o lib/style.css"
+    "build-bundle": "tsc && vite build --mode library && npx tailwind -c ./tailwind.config.cjs -i ./src/index.css -o lib/style.css"
   },
   "dependencies": {
     "@tiptap/extension-placeholder": "^2.0.0-beta.53",
