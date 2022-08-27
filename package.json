@@ -1,8 +1,8 @@
 {
-  "name": "@octarin/lolo",
-  "version": "0.0.30",
+  "name": "@octarin/lotion",
+  "version": "0.1.0",
   "type": "module",
-  "main": "lib/lolo.js",
+  "main": "lib/lotion.js",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
