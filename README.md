@@ -19,7 +19,7 @@
 > We shared about Lotion and recreating the Notion UI during [CityJS Singapore's pre-conference meetup on 27th July](https://twitter.com/dashibase/status/1554070309224861696?s=20&t=f9pkIgoxYUCgAL5tRTxK4Q)!
 
 <p align="center">
-  <img src="./assets/lotion.png" style="border-radius: 10px;" />
+  <img src="https://github.com/Dashibase/lotion/blob/main/assets/lotion.png" style="border-radius: 10px;" />
 </p>
 
 ## Features
