@@ -30,11 +30,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUpdate, PropType } from 'vue'
+import { ref, onBeforeUpdate, PropType } from 'vue'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
+import { v4 as uuidv4 } from 'uuid'
 import { Block, BlockType, isTextBlock } from '@/utils/types'
+import { htmlToMarkdown } from '@/utils/utils'
 import BlockComponent from './Block.vue'
-import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
   page: {
@@ -145,7 +146,7 @@ function insertBlock (blockIdx: number) {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p></p>',
+      value: '',
     },
   })
   setTimeout(() => {
@@ -216,12 +217,9 @@ function merge (blockIdx: number) {
 function split (blockIdx: number) {
   const caretPos = blockElements.value[blockIdx].getCaretPos()
   insertBlock(blockIdx)
-  props.page.blocks[blockIdx+1].details.value = (caretPos.tag ? `<p><${caretPos.tag}>` : '<p>') + (props.page.blocks[blockIdx].details.value ? props.page.blocks[blockIdx].details.value?.slice(caretPos.pos) : '')
-  if (isTextBlock(props.page.blocks[blockIdx].type)) {
-    props.page.blocks[blockIdx].details.value = (props.page.blocks[blockIdx].details.value ? props.page.blocks[blockIdx].details.value?.slice(0, caretPos.pos) : '') + (caretPos.tag ? `</${caretPos.tag}></p>` : '</p>')
-  } else {
-    props.page.blocks[blockIdx].details.value = (props.page.blocks[blockIdx].details.value ? props.page.blocks[blockIdx].details.value?.slice(0, caretPos.pos) : '') + (caretPos.tag ? `</${caretPos.tag}></p>` : '')
-  }
+  const htmlValue = blockElements.value[blockIdx].getHtmlContent()
+  props.page.blocks[blockIdx+1].details.value = htmlToMarkdown((caretPos.tag ? `<${caretPos.tag}>` : '') + (htmlValue ? htmlValue?.slice(caretPos.pos) : ''))
+  props.page.blocks[blockIdx].details.value = htmlToMarkdown((htmlValue ? htmlValue?.slice(0, caretPos.pos) : '') + (caretPos.tag ? `</${caretPos.tag}>` : ''))
   setTimeout(() => blockElements.value[blockIdx+1].moveToStart())
 }
 </script>

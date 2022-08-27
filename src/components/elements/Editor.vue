@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
@@ -13,6 +13,7 @@ import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
 import Placeholder from '@tiptap/extension-placeholder'
 import { useEditor, EditorContent } from '@tiptap/vue-3'
+import { markdownToHtml, htmlToMarkdown } from '@/utils/utils'
 
 const props = defineProps({
   modelValue: {
@@ -22,6 +23,20 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+const value = computed({
+  get () {
+    const mdValue = props.modelValue
+    if (mdValue) {
+      return markdownToHtml(mdValue)
+    } else {
+      return '<p></p>'
+    }
+  },
+  set (newValue) {
+    emit('update:modelValue', newValue)
+  },
+})
 
 const editor = useEditor({
   extensions: [
@@ -39,17 +54,15 @@ const editor = useEditor({
     // Removing default behavior for drop event
     handleDrop : () => true,
   },
-  content: props.modelValue,
+  content: value.value,
   onUpdate: () => {
-    emit('update:modelValue', editor.value?.getHTML().replaceAll(/\<br.*?\>/g, ''))
+    value.value = htmlToMarkdown(editor.value?.getHTML().replaceAll(/\<br.*?\>/g, '') || '')
   },
 })
 
 watch(() => props.modelValue, value => {
-  const isSame = editor.value?.getHTML() === value
-  if (isSame) {
-    return
-  }
-  editor.value?.commands.setContent(value, false)
+  const isSame = htmlToMarkdown(editor.value?.getHTML().replaceAll(/\<br.*?\>/g, '') || '') === value
+  if (isSame) return
+  editor.value?.commands.setContent(markdownToHtml(value), false)
 })
 </script>

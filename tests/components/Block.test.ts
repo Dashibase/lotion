@@ -8,14 +8,14 @@ describe('Block.vue', () => {
 
   it("should return text/HTML when calling getTextContent()/getHtmlContent()", async () => {
     const sampleText = 'Hello, world!'
-    const sampleHtml = `<p><strong>${sampleText}</strong></p>`
+    const sampleMarkdown = `**${sampleText}**`
     const outputHtml = `<strong>${sampleText}</strong>`
     const wrapper = mount(BlockComponent, {
       props: {
         block: {
           type: BlockType.Text,
           details: {
-            value: sampleHtml,
+            value: sampleMarkdown,
           },
         } as Block,
       }
@@ -46,23 +46,23 @@ describe('Block.vue', () => {
         wrapper.vm.moveToStart()
         let selection = window.getSelection()
         expect(selection?.getRangeAt(0).startOffset).toBe(0)
-        // caretPos should be length of "<p>" i.e. 3
+        // caretPos should be 0
         let caretPos = wrapper.vm.getCaretPos()
-        expect(caretPos.pos).toBe('<p>'.length)
+        expect(caretPos.pos).toBe(0)
         expect(caretPos.tag).toBe(null)
         
         wrapper.vm.moveToEnd()
         selection = window.getSelection()
         expect(selection?.getRangeAt(0).startOffset).toBe(sampleText.length)
-        // caretPos should be length of "<p>" + sampleText.length
+        // caretPos should be length of sampleText.length
         caretPos = wrapper.vm.getCaretPos()
-        expect(caretPos.pos).toBe('<p>'.length + sampleText.length)
+        expect(caretPos.pos).toBe(sampleText.length)
         expect(caretPos.tag).toBe(null)
 
         const newCaretPos = 5
         wrapper.vm.setCaretPos(newCaretPos)
         caretPos = wrapper.vm.getCaretPos()
-        expect(caretPos.pos).toBe('<p>'.length + newCaretPos)
+        expect(caretPos.pos).toBe(newCaretPos)
         expect(caretPos.tag).toBe(null)
         r()
       }, 0)
@@ -77,7 +77,7 @@ describe('Block.vue', () => {
         block: {
           type: BlockType.Text,
           details: {
-            value: `<p><strong>${sampleTextA}</strong>${sampleTextB}</p>`,
+            value: `**${sampleTextA}**${sampleTextB}`,
           },
         } as Block,
       }
@@ -87,21 +87,21 @@ describe('Block.vue', () => {
         wrapper.vm.moveToStart()
         let selection = window.getSelection()
         expect(selection?.getRangeAt(0).startOffset).toBe(0)
-        // caretPos should be length of "<p><strong>" i.e. 11
+        // caretPos should be length of "<strong>" i.e. 8
         let caretPos = wrapper.vm.getCaretPos()
         let caretPosWithoutTags = wrapper.vm.getCaretPosWithoutTags()
-        expect(caretPos.pos).toBe('<p><strong>'.length)
-        expect(caretPosWithoutTags.pos).toBe(caretPos.pos - '<p><strong>'.length)
+        expect(caretPos.pos).toBe('<strong>'.length)
+        expect(caretPosWithoutTags.pos).toBe(caretPos.pos - '<strong>'.length)
         expect(caretPos.tag).toBe(null)
         
         wrapper.vm.moveToEnd()
         selection = window.getSelection()
         expect(selection?.getRangeAt(0).startOffset).toBe(sampleTextB.length)
-        // caretPos should be length of full value minus last </p> tag
+        // caretPos should be length of full value with strong tags
         caretPos = wrapper.vm.getCaretPos()
         caretPosWithoutTags = wrapper.vm.getCaretPosWithoutTags()
-        expect(caretPos.pos).toBe(`<p><strong>${sampleTextA}</strong>${sampleTextB}`.length)
-        expect(caretPosWithoutTags.pos).toBe(caretPos.pos - '<p><strong></strong>'.length)
+        expect(caretPos.pos).toBe(`<strong>${sampleTextA}</strong>${sampleTextB}`.length)
+        expect(caretPosWithoutTags.pos).toBe(caretPos.pos - '<strong></strong>'.length)
         expect(caretPos.tag).toBe(null)
 
         // Setting caret in middle of a <strong> element should return <strong> tag
@@ -109,8 +109,8 @@ describe('Block.vue', () => {
         wrapper.vm.setCaretPos(newCaretPos)
         caretPos = wrapper.vm.getCaretPos()
         caretPosWithoutTags = wrapper.vm.getCaretPosWithoutTags()
-        expect(caretPos.pos).toBe('<p><strong>'.length + newCaretPos)
-        expect(caretPosWithoutTags.pos).toBe(caretPos.pos - '<p><strong>'.length)
+        expect(caretPos.pos).toBe('<strong>'.length + newCaretPos)
+        expect(caretPosWithoutTags.pos).toBe(caretPos.pos - '<strong>'.length)
         expect(caretPos.tag).toBe('strong')
 
         // Setting caret after <strong> element should account for <strong> tag
@@ -118,8 +118,8 @@ describe('Block.vue', () => {
         wrapper.vm.setCaretPos(newCaretPos)
         caretPos = wrapper.vm.getCaretPos()
         caretPosWithoutTags = wrapper.vm.getCaretPosWithoutTags()
-        expect(caretPos.pos).toBe(`<p><strong>${sampleTextA}</strong>`.length + newCaretPos - sampleTextA.length)
-        expect(caretPosWithoutTags.pos).toBe(caretPos.pos - '<p><strong></strong>'.length)
+        expect(caretPos.pos).toBe(`<strong>${sampleTextA}</strong>`.length + newCaretPos - sampleTextA.length)
+        expect(caretPosWithoutTags.pos).toBe(caretPos.pos - '<strong></strong>'.length)
         expect(caretPos.tag).toBe(null)
         r()
       }, 0)

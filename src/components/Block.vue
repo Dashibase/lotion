@@ -48,7 +48,7 @@ const props = defineProps({
     default: {
       type: BlockType.Text,
       details: {
-        value: '<p>Hello World</p>',
+        value: 'Hello World',
       },
     },
   },
@@ -334,7 +334,7 @@ function getCaretPos () {
         else offset += node.textContent.length
         offsetNode = node
       }
-      return { pos: offset + selection.anchorOffset + (selectedNode?.parentElement?.tagName === 'P' ? 3 : 0), tag }
+      return { pos: offset + selection.anchorOffset, tag }
     } else {
       return { pos: selection.anchorOffset }
     }
@@ -487,7 +487,7 @@ function setBlockType (blockType: BlockType, searchTermLength: number, openedWit
 async function clearSearch (searchTermLength: number, newBlockType: BlockType, openedWithSlash: boolean = false) {
   // If openedWithSlash, searchTermLength = 0 but we still need to clear
   const pos = getCaretPosWithoutTags().pos
-  let startIdx = pos - searchTermLength - 1
+  let startIdx = pos - (searchTermLength ? searchTermLength + 1 : 0)
   let endIdx = pos
   return new Promise<number>(resolve => {
     setTimeout(() => {
@@ -495,7 +495,7 @@ async function clearSearch (searchTermLength: number, newBlockType: BlockType, o
       if (!originalText) return
       props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
       if (newBlockType === BlockType.Text) {
-        props.block.details.value = `<p>${originalText.substring(0, startIdx) + originalText.substring(endIdx)}</p>`
+        props.block.details.value = `${originalText.substring(0, startIdx) + originalText.substring(endIdx)}`
       } else {
         (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
       }

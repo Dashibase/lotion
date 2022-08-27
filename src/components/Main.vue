@@ -47,55 +47,55 @@ const page = ref({
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p>👋 Welcome! This is a private page for you to play around with.</p>'
+      value: '👋 Welcome! This is a private page for you to play around with.'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p>Give these things a try:</p>'
+      value: 'Give these things a try:'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p>1. Hover on the left of each line for quick actions</p>'
+      value: '1. Hover on the left of each line for quick actions'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p>2. Click on the + button to add a new line</p>'
+      value: '2. Click on the + button to add a new line'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p>3. Drag the ⋮⋮ button to reorder</p>'
+      value: '3. Drag the ⋮⋮ button to reorder'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p>4. Click the trash icon to delete this block</p>'
+      value: '4. Click the trash icon to delete this block'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p>5. <strong>Bold</strong> and <em>italicize</em> using markdown e.g. *italic* or **bold**</p>'
+      value: '5. **Bold** and *italicize* using markdown'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p>6. Add headers and dividers with \'#\', \'##\' or \'---\' followed by a space</p>'
+      value: '6. Add headers and dividers with \'#\', \'##\' or \'---\' followed by a space'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '<p>7. Type \'/\' for a menu to quickly switch blocks and search by typing</p>'
+      value: '7. Type \'/\' for a menu to quickly switch blocks and search by typing'
     },
   },]
 })
