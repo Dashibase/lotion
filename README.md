@@ -6,13 +6,16 @@
   <a href="https://lotion.dashibase.com" target="_blank">Try demo</a>
 </p>
 <p align="center">
-  <a href="https://twitter.com/dashibase">
-    <img src="https://img.shields.io/badge/Twitter-00acee?logo=twitter&logoColor=white" />
+  <a href="https://twitter.com/intent/follow?screen_name=dashibase">
+    <img src="https://img.shields.io/twitter/follow/dashibase?style=social&logo=twitter" alt="follow on Twitter">
   </a>
-  <a href="https://discord.gg/CqgZGh4ZA8">
-    <img src="https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white" />
+  <a href="https://discord.gg/HjJCwm5">
+    <img src="https://img.shields.io/discord/995844576013201449?logo=discord&logoColor=b0b7ff&color=5865f2" alt="chat on Discord">
   </a>
-  <img src="https://img.shields.io/github/license/dashibase/lotion" />
+  <img src="https://img.shields.io/github/license/dashibase/lotion?color=green" />
+  <a href="https://www.npmjs.com/package/@dashibase/lotion">
+    <img src="https://img.shields.io/npm/v/@dashibase/lotion" />
+  </a>
   <br />
 </p>
 
