@@ -30,7 +30,7 @@
       <!-- Actual content -->
       <component :is="BlockComponents[props.block.type]" ref="content"
         :block="block" :readonly="props.readonly"
-        @keydown.capture="keyDownHandler"
+        @keydown="keyDownHandler"
         @keyup="parseMarkdown" />
     </div>
   </div>
@@ -491,14 +491,13 @@ async function clearSearch (searchTermLength: number, newBlockType: BlockType, o
   let endIdx = pos
   return new Promise<number>(resolve => {
     setTimeout(() => {
-      const originalText = (content.value as any).$el.innerText
+      const originalText = (content.value as any).$el.innerText.replaceAll(/\n|\r/g, '')
       if (!originalText) return
-      props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
-      if (newBlockType === BlockType.Text) {
-        props.block.details.value = `${originalText.substring(0, startIdx) + originalText.substring(endIdx)}`
-      } else {
-        (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
-      }
+      props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx)
+      // if (newBlockType !== BlockType.Text) {
+      //   (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
+      // }
+      // props.block.details.value = props.block.details.value.replaceAll(/\n|\r/, '')
       resolve(startIdx)
     })
   })

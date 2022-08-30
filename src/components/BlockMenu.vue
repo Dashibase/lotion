@@ -120,6 +120,15 @@ document.addEventListener('keydown', (event:KeyboardEvent) => {
   }
 })
 
+document.addEventListener('keyup', (event:KeyboardEvent) => {
+  if (!open.value) return
+  if (event.key === 'Enter') {
+    // Enter selects menu option
+    event.preventDefault()
+    event.stopPropagation()
+  }
+})
+
 /*
 Menu options
 */

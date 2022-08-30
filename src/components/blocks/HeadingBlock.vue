@@ -45,4 +45,12 @@ const props = defineProps({
 })
 
 const content = ref<HTMLDivElement>()
+
+function onSet () {
+  if (content.value && props.block.details.value) content.value.innerText = props.block.details.value
+}
+
+defineExpose({
+  onSet,
+})
 </script>
