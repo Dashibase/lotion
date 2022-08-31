@@ -72,3 +72,12 @@ export const availableBlockTypes = [
     blockType: BlockType.Quote,
   },
 ] as { type:string, icon:string, label:string, blockType:BlockType|string}[]
+
+export interface Lotion {
+	page: {
+		name: string;
+		blocks: Block[];
+	};
+	blockTypes: null | (string | BlockType)[];
+	readonly: boolean;
+}
