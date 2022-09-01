@@ -83,7 +83,7 @@ const page = ref({
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '5. **Bold** and *italicize* using markdown'
+      value: '5. **Bold** and *italicize* using markdown e.g. \\*\\*bold\\*\\* and \\*italics\\*'
     },
   }, {
     id: uuidv4(),
