@@ -1,12 +1,13 @@
 import { BlockComponents, availableBlockTypes } from './types'
 
-export function registerBlock(id:string, label:string, component:any, icon:string='bi-text-left') {
+export function registerBlock(id:string, label:string, component:any, icon:string='bi-text-left', canSplit:boolean=false) {
   (BlockComponents as any)[id] = component
   availableBlockTypes.push({
     type: 'Turn into',
     icon,
     label,
     blockType: id,
+    canSplit,
   })
 }
 
