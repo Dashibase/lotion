@@ -14,9 +14,13 @@ export function registerBlock(id:string, label:string, component:any, icon:strin
 export function markdownToHtml (mdString:string) {
   // Adapted from https://randyperkins2k.medium.com/writing-a-simple-markdown-parser-using-javascript-1f2e9449a558
   return mdString
-    .replace(/(?<!\\)\*(?<!\\)\*(.*?)(?<!\\)\*(?<!\\)\*/g, '<strong>$1</strong>')
-    .replace(/(?<!\\)\*(.*?)(?<!\\)\*/g, '<em>$1</em>')
-    .replace(/\\\*/g, '*')
+    .replace(/\\\*/g, '\\*\\*')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replaceAll('\\<em>\\</em>', '*')
+    // .replace(/(?<!\\)\*(?<!\\)\*(.*?)(?<!\\)\*(?<!\\)\*/g, '<strong>$1</strong>')
+    // .replace(/(?<!\\)\*(.*?)(?<!\\)\*/g, '<em>$1</em>')
+    // .replace(/\\\*/g, '*')
     .trim()
 }
 

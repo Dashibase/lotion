@@ -77,7 +77,7 @@ test('converting between types via keyboard should work and maintain caret posit
   await page.keyboard.type('/heading 2')
   await page.keyboard.press('Enter')
   // Wait for text to update to "Get Started"
-  await block.allTextContents()
+  await block.waitFor()
   // Testing caret position
   await page.keyboard.press('s')
   block = await page.locator('text="Get Startsed"')
