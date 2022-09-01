@@ -153,13 +153,13 @@ function keyDownHandler (event:KeyboardEvent) {
     }
   } else if (event.key === 'Backspace' && highlightedLength() === 0) {
     const selection = window.getSelection()
-    if (!(menu.value && menu.value.open) && atFirstChar() && selection && selection.anchorOffset === 0) {
+    if (!(menu.value && menu.value.open) && atFirstChar() && selection && selection.anchorOffset === 0 && !props.readonly) {
       event.preventDefault()
       emit('merge')
     }
   } else if (event.key === 'Enter') {
     event.preventDefault()
-    if (!(menu.value && menu.value.open)) {
+    if (!(menu.value && menu.value.open) && !props.readonly) {
       emit('split')
     }
   }
@@ -498,10 +498,6 @@ async function clearSearch (searchTermLength: number, newBlockType: BlockType, o
       const originalText = (content.value as any).$el.innerText.replaceAll(/\n|\r/g, '')
       if (!originalText) return
       props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx)
-      // if (newBlockType !== BlockType.Text) {
-      //   (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
-      // }
-      // props.block.details.value = props.block.details.value.replaceAll(/\n|\r/, '')
       resolve(startIdx)
     })
   })
