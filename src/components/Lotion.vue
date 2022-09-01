@@ -34,7 +34,7 @@
 import { ref, onBeforeUpdate, PropType } from 'vue'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import { v4 as uuidv4 } from 'uuid'
-import { Block, BlockType, isTextBlock } from '@/utils/types'
+import { Block, BlockType, isTextBlock, availableBlockTypes } from '@/utils/types'
 import { htmlToMarkdown } from '@/utils/utils'
 import BlockComponent from './Block.vue'
 
@@ -255,9 +255,13 @@ function mergeTitle () {
 function split (blockIdx: number) {
   const caretPos = blockElements.value[blockIdx].getCaretPos()
   insertBlock(blockIdx)
-  const htmlValue = blockElements.value[blockIdx].getHtmlContent()
-  props.page.blocks[blockIdx+1].details.value = htmlToMarkdown((caretPos.tag ? `<${caretPos.tag}>` : '') + (htmlValue ? htmlValue?.slice(caretPos.pos) : ''))
-  props.page.blocks[blockIdx].details.value = htmlToMarkdown((htmlValue ? htmlValue?.slice(0, caretPos.pos) : '') + (caretPos.tag ? `</${caretPos.tag}>` : ''))
+  const blockTypeDetails = availableBlockTypes.find(blockType => blockType.blockType === props.page.blocks[blockIdx].type)
+  if (!blockTypeDetails) return
+  if (blockTypeDetails.canSplit) {
+    const htmlValue = blockElements.value[blockIdx].getHtmlContent()
+    props.page.blocks[blockIdx+1].details.value = htmlToMarkdown((caretPos.tag ? `<${caretPos.tag}>` : '') + (htmlValue ? htmlValue?.slice(caretPos.pos) : ''))
+    props.page.blocks[blockIdx].details.value = htmlToMarkdown((htmlValue ? htmlValue?.slice(0, caretPos.pos) : '') + (caretPos.tag ? `</${caretPos.tag}>` : ''))
+  }
   setTimeout(() => blockElements.value[blockIdx+1].moveToStart())
 }
 
