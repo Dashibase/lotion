@@ -210,38 +210,38 @@ function merge (blockIdx: number) {
     return
   }
 
-  if (blockIdx === 0) {
-    mergeTitle()
-    return
-  }
+  if (blockIdx === 0) mergeTitle()
+  else mergeBlocks(blockIdx-1, blockIdx)
+}
 
-  if (isTextBlock(props.page.blocks[blockIdx-1].type)) {
-    const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
-    let suffix = (props.page.blocks[blockIdx] as any).details.value
-    if ([BlockType.H1, BlockType.H2, BlockType.H3,BlockType.Quote].includes(props.page.blocks[blockIdx].type)) suffix = blockElements.value[blockIdx].getTextContent()
-    props.page.blocks[blockIdx-1].details.value = (props.page.blocks[blockIdx-1] as any).details.value + suffix
+function mergeBlocks (prefixBlockIdx: number, suffixBlockIdx: string) {
+  if (isTextBlock(props.page.blocks[prefixBlockIdx].type)) {
+    const prevBlockContentLength = blockElements.value[prefixBlockIdx].getTextContent().length
+    let suffix = (props.page.blocks[suffixBlockIdx] as any).details.value
+    if ([BlockType.H1, BlockType.H2, BlockType.H3,BlockType.Quote].includes(props.page.blocks[suffixBlockIdx].type)) suffix = blockElements.value[suffixBlockIdx].getTextContent()
+    props.page.blocks[prefixBlockIdx].details.value = (props.page.blocks[prefixBlockIdx] as any).details.value + suffix
     setTimeout(() => {
-      blockElements.value[blockIdx-1].setCaretPos(prevBlockContentLength)
-      props.page.blocks.splice(blockIdx, 1)
+      blockElements.value[prefixBlockIdx].setCaretPos(prevBlockContentLength)
+      props.page.blocks.splice(suffixBlockIdx, 1)
     })
-  } else if ([BlockType.H1, BlockType.H2, BlockType.H3].includes(props.page.blocks[blockIdx-1].type)) {
-    const prevBlockContentLength = (props.page.blocks[blockIdx-1] as any).details.value.length
-    props.page.blocks[blockIdx-1].details.value += blockElements.value[blockIdx].getTextContent()
+  } else if ([BlockType.H1, BlockType.H2, BlockType.H3].includes(props.page.blocks[prefixBlockIdx].type)) {
+    const prevBlockContentLength = (props.page.blocks[prefixBlockIdx] as any).details.value.length
+    props.page.blocks[prefixBlockIdx].details.value += blockElements.value[suffixBlockIdx].getTextContent()
     setTimeout(() => {
-      blockElements.value[blockIdx-1].setCaretPos(prevBlockContentLength)
-      props.page.blocks.splice(blockIdx, 1)
+      blockElements.value[prefixBlockIdx].setCaretPos(prevBlockContentLength)
+      props.page.blocks.splice(suffixBlockIdx, 1)
     })
   } else {
-    props.page.blocks.splice(blockIdx-1, 1)
-    setTimeout(() => blockElements.value[blockIdx-1].moveToStart())
+    if (prefixBlockIdx > 0) mergeBlocks(prefixBlockIdx - 1, suffixBlockIdx)
+    else mergeTitle(suffixBlockIdx)
   }
 }
 
-function mergeTitle () {
+function mergeTitle (blockIdx:number = 0) {
   const titleElement = document.getElementById('title')
   const title = props.page.name
-  props.page.name = title + blockElements.value[0].getTextContent()
-  props.page.blocks.splice(0, 1)
+  props.page.name = title + blockElements.value[blockIdx].getTextContent()
+  props.page.blocks.splice(blockIdx, 1)
   setTimeout(() => {
     const selection = window.getSelection()
     const range = document.createRange()
