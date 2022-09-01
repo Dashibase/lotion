@@ -220,16 +220,16 @@ function mergeBlocks (prefixBlockIdx: number, suffixBlockIdx: string) {
     let suffix = (props.page.blocks[suffixBlockIdx] as any).details.value
     if ([BlockType.H1, BlockType.H2, BlockType.H3,BlockType.Quote].includes(props.page.blocks[suffixBlockIdx].type)) suffix = blockElements.value[suffixBlockIdx].getTextContent()
     props.page.blocks[prefixBlockIdx].details.value = (props.page.blocks[prefixBlockIdx] as any).details.value + suffix
+    props.page.blocks.splice(suffixBlockIdx, 1)
     setTimeout(() => {
       blockElements.value[prefixBlockIdx].setCaretPos(prevBlockContentLength)
-      props.page.blocks.splice(suffixBlockIdx, 1)
     })
   } else if ([BlockType.H1, BlockType.H2, BlockType.H3].includes(props.page.blocks[prefixBlockIdx].type)) {
     const prevBlockContentLength = (props.page.blocks[prefixBlockIdx] as any).details.value.length
     props.page.blocks[prefixBlockIdx].details.value += blockElements.value[suffixBlockIdx].getTextContent()
+    props.page.blocks.splice(suffixBlockIdx, 1)
     setTimeout(() => {
       blockElements.value[prefixBlockIdx].setCaretPos(prevBlockContentLength)
-      props.page.blocks.splice(suffixBlockIdx, 1)
     })
   } else {
     if (prefixBlockIdx > 0) mergeBlocks(prefixBlockIdx - 1, suffixBlockIdx)
