@@ -1,8 +1,8 @@
 <!-- Adapted from https://tiptap.dev/installation/vue3 -->
 <template>
   <editor-content :editor="editor" spellcheck="false"
-    @keyup.enter.prevent="() => {}"
-    @keydown.enter.prevent="() => {}" />
+    @keyup.enter.capture.prevent="() => {}"
+    @keydown.enter.capture.prevent="() => {}" />
 </template>
 
 <script setup lang="ts">
@@ -58,12 +58,12 @@ const editor = useEditor({
   },
   content: value.value,
   onUpdate: () => {
-    value.value = htmlToMarkdown(editor.value?.getHTML().replaceAll(/\<br.*?\>/g, '') || '')
+    value.value = htmlToMarkdown(editor.value?.getHTML() || '')
   },
 })
 
 watch(() => props.modelValue, value => {
-  const isSame = htmlToMarkdown(editor.value?.getHTML().replaceAll(/\<br.*?\>/g, '') || '') === value
+  const isSame = htmlToMarkdown(editor.value?.getHTML() || '') === value
   if (isSame) return
   editor.value?.commands.setContent(markdownToHtml(value), false)
 })

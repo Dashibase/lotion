@@ -1,7 +1,8 @@
 <template>
   <div class="lotion w-[65ch] mx-auto my-24 font-sans text-base" v-if="props.page" ref="editor">
     <h1 id="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
-      @keydown.enter="$event.preventDefault()"
+      @keydown.enter.prevent="splitTitle"
+      @keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
       @blur="props.page.name=($event.target as HTMLElement).innerText.replace('\n', '')"
       class="focus:outline-none focus-visible:outline-none text-5xl font-bold mb-12"
       :class="props.page.name ? '' : 'empty'">
@@ -18,7 +19,7 @@
           @newBlock="insertBlock(i)"
           @moveToPrevChar="blockElements[i-1]?.moveToEnd(); scrollIntoView();"
           @moveToNextChar="blockElements[i+1]?.moveToStart(); scrollIntoView();"
-          @moveToPrevLine="blockElements[i-1]?.moveToLastLine(); scrollIntoView();"
+          @moveToPrevLine="handleMoveToPrevLine(i)"
           @moveToNextLine="blockElements[i+1]?.moveToFirstLine(); scrollIntoView();"
           @merge="merge(i)"
           @split="split(i)"
@@ -141,6 +142,22 @@ function scrollIntoView () {
   }
 }
 
+function handleMoveToPrevLine (blockIdx:number) {
+  if (blockIdx === 0) {
+    setTimeout(() => {
+      const titleElement = document.getElementById('title')
+      const selection = window.getSelection()
+      const range = document.createRange()
+      range.setStart(titleElement.childNodes[0], props.page.name.length)
+      range.setEnd(titleElement.childNodes[0], props.page.name.length)
+      selection?.removeAllRanges()
+      selection?.addRange(range)
+    })
+  }
+  else blockElements.value[blockIdx-1]?.moveToLastLine()
+  scrollIntoView()
+}
+
 function insertBlock (blockIdx: number) {
   props.page.blocks.splice(blockIdx + 1, 0, {
     id: uuidv4(),
@@ -174,30 +191,35 @@ async function setBlockType (blockIdx: number, type: BlockType) {
   } else setTimeout(() => {
     if (blockElements.value[blockIdx].content.onSet) {
       blockElements.value[blockIdx].content.onSet()
-    } else {
-      blockElements.value[blockIdx].moveToEnd()
     }
+    blockElements.value[blockIdx].moveToEnd()
   })
 }
 
 function merge (blockIdx: number) {
   // When deleting the first character of non-text block
   // the block should first turn into a text block
-  if([BlockType.H1, BlockType.H2, BlockType.H3,BlockType.Quote]
+  if([BlockType.H1, BlockType.H2, BlockType.H3, BlockType.Quote]
       .includes(props.page.blocks[blockIdx].type)){
+    const prevBlockContent = blockElements.value[blockIdx].getTextContent()    
     setBlockType(blockIdx, BlockType.Text)
+    props.page.blocks[blockIdx].details.value = prevBlockContent
     setTimeout(()=>{
       blockElements.value[blockIdx].moveToStart()
     })
     return
   }
 
-  if (blockIdx === 0) return
+  if (blockIdx === 0) {
+    mergeTitle()
+    return
+  }
 
   if (isTextBlock(props.page.blocks[blockIdx-1].type)) {
     const prevBlockContentLength = blockElements.value[blockIdx-1].getTextContent().length
-    // props.page.blocks[blockIdx-1].details.value = ('<p>' + (props.page.blocks[blockIdx-1] as any).details.value.replace('<p>', '').replace('</p>', '') + blockElements.value[blockIdx].getHtmlContent().replaceAll(/\<br.*?\>/g, '').replace('<p>', '').replace('</p>', '') + '</p>').replace('</strong><strong>', '').replace('</em><em>', '')
-    props.page.blocks[blockIdx-1].details.value = (props.page.blocks[blockIdx-1] as any).details.value + (props.page.blocks[blockIdx] as any).details.value
+    let suffix = (props.page.blocks[blockIdx] as any).details.value
+    if ([BlockType.H1, BlockType.H2, BlockType.H3,BlockType.Quote].includes(props.page.blocks[blockIdx].type)) suffix = blockElements.value[blockIdx].getTextContent()
+    props.page.blocks[blockIdx-1].details.value = (props.page.blocks[blockIdx-1] as any).details.value + suffix
     setTimeout(() => {
       blockElements.value[blockIdx-1].setCaretPos(prevBlockContentLength)
       props.page.blocks.splice(blockIdx, 1)
@@ -215,6 +237,21 @@ function merge (blockIdx: number) {
   }
 }
 
+function mergeTitle () {
+  const titleElement = document.getElementById('title')
+  const title = props.page.name
+  props.page.name = title + blockElements.value[0].getTextContent()
+  props.page.blocks.splice(0, 1)
+  setTimeout(() => {
+    const selection = window.getSelection()
+    const range = document.createRange()
+    range.setStart(titleElement.childNodes[0], title.length)
+    range.setEnd(titleElement.childNodes[0], title.length)
+    selection?.removeAllRanges()
+    selection?.addRange(range)
+  })
+}
+
 function split (blockIdx: number) {
   const caretPos = blockElements.value[blockIdx].getCaretPos()
   insertBlock(blockIdx)
@@ -222,5 +259,15 @@ function split (blockIdx: number) {
   props.page.blocks[blockIdx+1].details.value = htmlToMarkdown((caretPos.tag ? `<${caretPos.tag}>` : '') + (htmlValue ? htmlValue?.slice(caretPos.pos) : ''))
   props.page.blocks[blockIdx].details.value = htmlToMarkdown((htmlValue ? htmlValue?.slice(0, caretPos.pos) : '') + (caretPos.tag ? `</${caretPos.tag}>` : ''))
   setTimeout(() => blockElements.value[blockIdx+1].moveToStart())
+}
+
+function splitTitle () {
+  const selection = window.getSelection()
+  if (!selection) return
+  const caretPos = selection.anchorOffset
+  insertBlock(-1)
+  const title = props.page.name
+  props.page.name = title.slice(0, caretPos)
+  props.page.blocks[0].details.value = title.slice(caretPos)
 }
 </script>

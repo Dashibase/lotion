@@ -152,7 +152,8 @@ function keyDownHandler (event:KeyboardEvent) {
       emit('moveToNextChar')
     }
   } else if (event.key === 'Backspace' && highlightedLength() === 0) {
-    if (!(menu.value && menu.value.open) && atFirstChar()) {
+    const selection = window.getSelection()
+    if (!(menu.value && menu.value.open) && atFirstChar() && selection && selection.anchorOffset === 0) {
       event.preventDefault()
       emit('merge')
     }
@@ -447,10 +448,13 @@ function parseMarkdown (event:KeyboardEvent) {
   }
 
   const handleMarkdownContent = (blockType: keyof typeof markdownRegexpMap) => {
-    emit('setBlockType', blockType)
     const newContent = textContent.replace(markdownRegexpMap[blockType], '$1')
-    ;(content.value as any).innerText = newContent
-    props.block.details.value = newContent
+    
+    emit('setBlockType', blockType)
+    setTimeout(() => {
+      props.block.details.value = newContent
+      moveToStart()
+    })
   }
 
 
