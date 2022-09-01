@@ -496,7 +496,7 @@ async function clearSearch (searchTermLength: number, newBlockType: BlockType, o
   return new Promise<number>(resolve => {
     setTimeout(() => {
       const originalText = (content.value as any).$el.innerText.replaceAll(/\n|\r/g, '')
-      if (!originalText) return
+      if (!originalText) resolve(0)
       props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx)
       resolve(startIdx)
     })
