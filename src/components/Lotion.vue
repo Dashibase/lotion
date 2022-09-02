@@ -258,7 +258,8 @@ function split (blockIdx: number) {
   const blockTypeDetails = availableBlockTypes.find(blockType => blockType.blockType === props.page.blocks[blockIdx].type)
   if (!blockTypeDetails) return
   if (blockTypeDetails.canSplit) {
-    const htmlValue = blockElements.value[blockIdx].getHtmlContent()
+    let htmlValue = blockElements.value[blockIdx].getHtmlContent()
+    htmlValue = htmlValue.replace('<br class="ProseMirror-trailingBreak">', '')
     props.page.blocks[blockIdx+1].details.value = htmlToMarkdown((caretPos.tag ? `<${caretPos.tag}>` : '') + (htmlValue ? htmlValue?.slice(caretPos.pos) : ''))
     props.page.blocks[blockIdx].details.value = htmlToMarkdown((htmlValue ? htmlValue?.slice(0, caretPos.pos) : '') + (caretPos.tag ? `</${caretPos.tag}>` : ''))
   }
