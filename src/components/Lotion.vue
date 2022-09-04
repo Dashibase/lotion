@@ -1,6 +1,6 @@
 <template>
   <div class="lotion w-[65ch] mx-auto my-24 font-sans text-base" v-if="props.page" ref="editor">
-    <h1 id="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
+    <h1 id="title" ref="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
       @keydown.enter.prevent="splitTitle"
       @keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
       @blur="props.page.name=($event.target as HTMLElement).innerText.replace('\n', '')"
@@ -145,11 +145,16 @@ function scrollIntoView () {
 function handleMoveToPrevLine (blockIdx:number) {
   if (blockIdx === 0) {
     setTimeout(() => {
-      const titleElement = document.getElementById('title')
+      if (!title.value) return
       const selection = window.getSelection()
       const range = document.createRange()
-      range.setStart(titleElement.childNodes[0], props.page.name.length)
-      range.setEnd(titleElement.childNodes[0], props.page.name.length)
+      if (title.value.childNodes.length) {
+        range.setStart(title.value.childNodes[0], props.page.name.length)
+        range.setEnd(title.value.childNodes[0], props.page.name.length)
+      } else {
+        range.setStart(title.value, 0)
+        range.setEnd(title.value, 0)
+      }
       selection?.removeAllRanges()
       selection?.addRange(range)
     })
@@ -186,8 +191,10 @@ async function setBlockType (blockIdx: number, type: BlockType) {
   }
   props.page.blocks[blockIdx].type = type
   if (type === BlockType.Divider) {
-    props.page.blocks[blockIdx].details = {}
-    insertBlock(blockIdx)
+    setTimeout(() => {
+      props.page.blocks[blockIdx].details = {}
+      insertBlock(blockIdx)
+    })
   } else setTimeout(() => {
     if (blockElements.value[blockIdx].content.onSet) {
       blockElements.value[blockIdx].content.onSet()
@@ -214,7 +221,7 @@ function merge (blockIdx: number) {
   else mergeBlocks(blockIdx-1, blockIdx)
 }
 
-function mergeBlocks (prefixBlockIdx: number, suffixBlockIdx: string) {
+function mergeBlocks (prefixBlockIdx: number, suffixBlockIdx: number) {
   if (isTextBlock(props.page.blocks[prefixBlockIdx].type)) {
     const prevBlockContentLength = blockElements.value[prefixBlockIdx].getTextContent().length
     let suffix = (props.page.blocks[suffixBlockIdx] as any).details.value
@@ -239,6 +246,7 @@ function mergeBlocks (prefixBlockIdx: number, suffixBlockIdx: string) {
 
 function mergeTitle (blockIdx:number = 0) {
   const titleElement = document.getElementById('title')
+  if (!titleElement) return
   const title = props.page.name
   props.page.name = title + blockElements.value[blockIdx].getTextContent()
   props.page.blocks.splice(blockIdx, 1)
@@ -266,13 +274,15 @@ function split (blockIdx: number) {
   setTimeout(() => blockElements.value[blockIdx+1].moveToStart())
 }
 
+const title = ref<HTMLDivElement|null>(null)
 function splitTitle () {
+  if (!title.value) return
   const selection = window.getSelection()
   if (!selection) return
   const caretPos = selection.anchorOffset
   insertBlock(-1)
-  const title = props.page.name
-  props.page.name = title.slice(0, caretPos)
-  props.page.blocks[0].details.value = title.slice(caretPos)
+  const titleString = title.value.textContent as string
+  props.page.name = titleString.slice(0, caretPos)
+  props.page.blocks[0].details.value = titleString.slice(caretPos)
 }
 </script>
