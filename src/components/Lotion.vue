@@ -51,6 +51,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  onSetAll: {
+    type: Function as PropType<(block:Block) => void>,
+  },
+  onUnsetAll: {
+    type: Function as PropType<(block:Block) => void>,
+  },
+  onCreateBlock: {
+    type: Function as PropType<(block:Block) => void>,
+  },
+  onDeleteBlock: {
+    type: Function as PropType<(block:Block) => void>,
+  },
 })
 
 const editor = ref<HTMLDivElement|null>(null)
@@ -164,13 +176,15 @@ function handleMoveToPrevLine (blockIdx:number) {
 }
 
 function insertBlock (blockIdx: number) {
-  props.page.blocks.splice(blockIdx + 1, 0, {
+  const newBlock = {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
       value: '',
     },
-  })
+  }
+  props.page.blocks.splice(blockIdx + 1, 0, newBlock)
+  if (props.onCreateBlock) props.onCreateBlock(props.page.blocks[blockIdx+1])
   setTimeout(() => {
     blockElements.value[blockIdx+1].moveToStart()
     scrollIntoView()
@@ -178,6 +192,7 @@ function insertBlock (blockIdx: number) {
 }
 
 function deleteBlock (blockIdx: number) {
+  if (props.onDeleteBlock) props.onDeleteBlock(props.page.blocks[blockIdx])
   props.page.blocks.splice(blockIdx, 1)
   // Always keep at least one block
   if (props.page.blocks.length === 0) {
@@ -186,6 +201,7 @@ function deleteBlock (blockIdx: number) {
 }
 
 async function setBlockType (blockIdx: number, type: BlockType) {
+  if (props.onUnsetAll) props.onUnsetAll(props.page.blocks[blockIdx])
   if (blockElements.value[blockIdx].content.onUnset) {
     blockElements.value[blockIdx].content.onUnset()
   }
@@ -196,6 +212,7 @@ async function setBlockType (blockIdx: number, type: BlockType) {
       insertBlock(blockIdx)
     })
   } else setTimeout(() => {
+    if (props.onSetAll) props.onSetAll(props.page.blocks[blockIdx])
     if (blockElements.value[blockIdx].content.onSet) {
       blockElements.value[blockIdx].content.onSet()
     }
@@ -204,6 +221,7 @@ async function setBlockType (blockIdx: number, type: BlockType) {
 }
 
 function merge (blockIdx: number) {
+  if (props.onDeleteBlock) props.onDeleteBlock(props.page.blocks[blockIdx])
   // When deleting the first character of non-text block
   // the block should first turn into a text block
   if([BlockType.H1, BlockType.H2, BlockType.H3, BlockType.Quote]
