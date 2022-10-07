@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-4 right-4 bg-neutral-800 font-sans text-white px-4 rounded-lg py-2 z-999">
+  <div class="fixed bottom-4 right-4 bg-neutral-800 font-sans text-white px-4 rounded-lg py-2 z-[99]">
     <input type="checkbox" v-model="readonly" class="mr-2" />
     <label for="checkbox">Read-only</label>
   </div>

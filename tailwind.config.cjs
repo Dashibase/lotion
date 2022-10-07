@@ -21,10 +21,6 @@ module.exports = {
         4: '4px',
       },
     },
-    zIndex: {
-      999: 999,
-      auto: 'auto',
-    },
     groups: ['tooltip'],
   },
   corePlugins: {
