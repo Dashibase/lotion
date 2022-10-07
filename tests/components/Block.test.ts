@@ -11,6 +11,9 @@ describe('Block.vue', () => {
     const sampleMarkdown = `**${sampleText}**`
     const outputHtml = `<strong>${sampleText}</strong>`
     const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         block: {
           type: BlockType.Text,
@@ -32,6 +35,9 @@ describe('Block.vue', () => {
   it("should move cursor correctly - moveToStart, moveToEnd", async () => {
     const sampleText = 'Hello, world!'
     const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         block: {
           type: BlockType.Text,
@@ -73,6 +79,9 @@ describe('Block.vue', () => {
     const sampleTextA = 'Hello'
     const sampleTextB = ', world!'
     const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         block: {
           type: BlockType.Text,
@@ -127,7 +136,11 @@ describe('Block.vue', () => {
   })
 
   it("should emit correct events on arrow navigation", async () => {
-    const wrapper = mount(BlockComponent)
+    const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
+    })
     await new Promise<void>(r => {
       setTimeout(async () => {
         wrapper.vm.moveToStart()
@@ -153,7 +166,11 @@ describe('Block.vue', () => {
   })
 
   it("should emit correct events on backspace / enter", async () => {
-    const wrapper = mount(BlockComponent)
+    const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
+    })
     await new Promise<void>(r => {
       setTimeout(async () => {
         wrapper.vm.moveToStart()
@@ -172,6 +189,9 @@ describe('Block.vue', () => {
 
   it("should change to H1 on #", async () => {
     const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         block: {
           type: BlockType.Text,
@@ -193,6 +213,9 @@ describe('Block.vue', () => {
 
   it("should change to H2 on ##", async () => {
     const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         block: {
           type: BlockType.Text,
@@ -214,6 +237,9 @@ describe('Block.vue', () => {
 
   it("should change to H3 on ###", async () => {
     const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         block: {
           type: BlockType.Text,
@@ -235,6 +261,9 @@ describe('Block.vue', () => {
 
   it("should change to Quote on >", async () => {
     const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         block: {
           type: BlockType.Text,
@@ -256,6 +285,9 @@ describe('Block.vue', () => {
 
   it("should change to Divider on ---", async () => {
     const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         block: {
           type: BlockType.H1,
@@ -276,7 +308,11 @@ describe('Block.vue', () => {
   })
 
   it("should render default blockType and content without props", async () => {
-    const wrapper = mount(BlockComponent)
+    const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
+    })
     await new Promise<void>(r => {
       setTimeout(() => {
         expect(wrapper.vm.block.type).toBe(BlockType.Text)
@@ -289,6 +325,9 @@ describe('Block.vue', () => {
 
   it("should render BlockType.Divider without content", async () => {
     const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         block: {
           type: BlockType.Divider,

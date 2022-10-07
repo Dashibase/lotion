@@ -1,6 +1,8 @@
 <!-- Adapted from https://tiptap.dev/installation/vue3 -->
 <template>
-  <editor-content :editor="editor" spellcheck="false" @keyup.enter.prevent="() => {}" />
+  <editor-content :editor="editor" spellcheck="false"
+    @keyup.enter.capture.prevent="() => {}"
+    @keydown.enter.capture.prevent="() => {}" />
 </template>
 
 <script setup lang="ts">
@@ -12,6 +14,7 @@ import Bold from '@tiptap/extension-bold'
 import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
 import Placeholder from '@tiptap/extension-placeholder'
+import Link from '@tiptap/extension-link'
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import { markdownToHtml, htmlToMarkdown } from '@/utils/utils'
 
@@ -46,6 +49,7 @@ const editor = useEditor({
     Bold,
     Italic,
     History,
+    Link,
     Placeholder.configure({
       placeholder: 'Type \'/\' for a menu'
     })
@@ -56,12 +60,12 @@ const editor = useEditor({
   },
   content: value.value,
   onUpdate: () => {
-    value.value = htmlToMarkdown(editor.value?.getHTML().replaceAll(/\<br.*?\>/g, '') || '')
+    value.value = htmlToMarkdown(editor.value?.getHTML() || '')
   },
 })
 
 watch(() => props.modelValue, value => {
-  const isSame = htmlToMarkdown(editor.value?.getHTML().replaceAll(/\<br.*?\>/g, '') || '') === value
+  const isSame = htmlToMarkdown(editor.value?.getHTML() || '') === value
   if (isSame) return
   editor.value?.commands.setContent(markdownToHtml(value), false)
 })
