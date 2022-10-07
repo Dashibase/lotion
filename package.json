@@ -1,8 +1,8 @@
 {
   "name": "@dashibase/lotion",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
-  "main": "lib/lotion.js",
+  "main": "lib/lolo.js",
   "types": "types/src/index.d.ts",
   "files": [
     "lib/",
@@ -24,6 +24,7 @@
     "build-bundle": "tsc && vite build --mode library && npx tailwind -c ./tailwind.config.cjs -i ./src/index.css -o lib/style.css"
   },
   "dependencies": {
+    "@tiptap/extension-link": "^2.0.0-beta.195",
     "@tiptap/extension-placeholder": "^2.0.0-beta.53",
     "@tiptap/starter-kit": "^2.0.0-beta.191",
     "@tiptap/vue-3": "^2.0.0-beta.96",
@@ -35,7 +36,7 @@
   },
   "devDependencies": {
     "@babel/types": "^7.18.9",
-    "@playwright/test": "^1.25.0",
+    "@playwright/test": "^1.25.1",
     "@types/node": "^18.0.6",
     "@types/sortablejs": "^1.13.0",
     "@types/uuid": "^8.3.4",

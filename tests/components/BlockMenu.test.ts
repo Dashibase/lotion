@@ -7,6 +7,9 @@ describe('BlockMenu.vue', () => {
 
   it("should open/close according to click events", async () => {
     const wrapper = mount(BlockMenu, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         blockTypes: ['TEXT', 'QUOTE'],
       }
@@ -42,6 +45,9 @@ describe('BlockMenu.vue', () => {
 
   it("should respond to keyboard navigation", async () => {
     const wrapper = mount(BlockMenu, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         blockTypes: ['TEXT', 'QUOTE'],
       }
@@ -84,6 +90,9 @@ describe('BlockMenu.vue', () => {
 
   it('should support search', async () => {
     const wrapper = mount(BlockMenu, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         blockTypes: ['TEXT', 'QUOTE'],
       }
@@ -108,6 +117,9 @@ describe('BlockMenu.vue', () => {
 
   it('should emit setBlockType', async () => {
     const wrapper = mount(BlockMenu, {
+      global: {
+        stubs: ['v-icon'],
+      },
       props: {
         blockTypes: ['TEXT', 'QUOTE'],
       }

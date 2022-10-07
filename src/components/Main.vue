@@ -20,15 +20,6 @@ import Markdown from './Markdown.vue'
 import Lotion from './Lotion.vue'
 import { v4 as uuidv4 } from 'uuid'
 
-// Example of how to add a custom block
-// A "Moisturize" option should appear in the menu
-// import { FaPumpSoap } from "oh-vue-icons/icons"
-// import { addIcons } from "oh-vue-icons"
-// import { registerBlock } from '@/utils/utils'
-// import CustomBlock from '../../examples/CustomBlock.vue'
-// addIcons(FaPumpSoap)
-// registerBlock('LOTION', 'Moisturize', CustomBlock, 'fa-pump-soap')
-
 const readonly = ref(false)
 
 const page = ref({
@@ -83,7 +74,7 @@ const page = ref({
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '5. **Bold** and *italicize* using markdown'
+      value: '5. **Bold** and *italicize* using markdown e.g. \\*\\*bold\\*\\* and \\*italics\\*'
     },
   }, {
     id: uuidv4(),

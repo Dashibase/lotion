@@ -1,5 +1,5 @@
 <template>
-  <div ref="content"
+  <div ref="content" :key="props.block.type"
     :contenteditable="!props.readonly" spellcheck="false"
     @blur="props.block.details.value=content?.innerText"
     class="focus:outline-none focus-visible:outline-none w-full py-1.5 font-semibold"
@@ -45,4 +45,12 @@ const props = defineProps({
 })
 
 const content = ref<HTMLDivElement>()
+
+function onSet () {
+  if (content.value && props.block.details.value) content.value.innerText = props.block.details.value
+}
+
+defineExpose({
+  onSet,
+})
 </script>

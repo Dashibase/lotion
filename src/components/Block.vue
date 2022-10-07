@@ -30,7 +30,7 @@
       <!-- Actual content -->
       <component :is="BlockComponents[props.block.type]" ref="content"
         :block="block" :readonly="props.readonly"
-        @keydown.capture="keyDownHandler"
+        @keydown="keyDownHandler"
         @keyup="parseMarkdown" />
     </div>
   </div>
@@ -152,13 +152,14 @@ function keyDownHandler (event:KeyboardEvent) {
       emit('moveToNextChar')
     }
   } else if (event.key === 'Backspace' && highlightedLength() === 0) {
-    if (!(menu.value && menu.value.open) && atFirstChar()) {
+    const selection = window.getSelection()
+    if (!(menu.value && menu.value.open) && atFirstChar() && selection && selection.anchorOffset === 0 && !props.readonly) {
       event.preventDefault()
       emit('merge')
     }
   } else if (event.key === 'Enter') {
     event.preventDefault()
-    if (!(menu.value && menu.value.open)) {
+    if (!(menu.value && menu.value.open) && !props.readonly) {
       emit('split')
     }
   }
@@ -447,10 +448,13 @@ function parseMarkdown (event:KeyboardEvent) {
   }
 
   const handleMarkdownContent = (blockType: keyof typeof markdownRegexpMap) => {
-    emit('setBlockType', blockType)
     const newContent = textContent.replace(markdownRegexpMap[blockType], '$1')
-    ;(content.value as any).innerText = newContent
-    props.block.details.value = newContent
+    
+    emit('setBlockType', blockType)
+    setTimeout(() => {
+      props.block.details.value = newContent
+      moveToStart()
+    })
   }
 
 
@@ -491,14 +495,9 @@ async function clearSearch (searchTermLength: number, newBlockType: BlockType, o
   let endIdx = pos
   return new Promise<number>(resolve => {
     setTimeout(() => {
-      const originalText = (content.value as any).$el.innerText
-      if (!originalText) return
-      props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx);
-      if (newBlockType === BlockType.Text) {
-        props.block.details.value = `${originalText.substring(0, startIdx) + originalText.substring(endIdx)}`
-      } else {
-        (content.value as any).$el.innerText = originalText.substring(0, startIdx) + originalText.substring(endIdx)
-      }
+      const originalText = (content.value as any).$el.innerText.replaceAll(/\n|\r/g, '')
+      if (!originalText) resolve(0)
+      props.block.details.value = originalText.substring(0, startIdx) + originalText.substring(endIdx)
       resolve(startIdx)
     })
   })

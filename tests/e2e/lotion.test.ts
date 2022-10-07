@@ -64,6 +64,8 @@ test('converting between types via mouse should work', async ({ page }) => {
 })
 
 test('converting between types via keyboard should work and maintain caret position', async ({ page, browserName }) => {
+  test.skip(browserName === 'chromium', 'Chromium specific heading bug - to fix in the future')
+
   await page.goto('/')
   expect(page).toHaveTitle(/Lotion/)
 
@@ -92,8 +94,6 @@ test('converting between types via keyboard should work and maintain caret posit
   block = await page.locator('text="Get Startded"')
   const isH3 = await isBlockType(block, BlockType.H3)
   expect(isH3).toBe(true)
-
-  test.skip(browserName === 'chromium', 'Chromium specific heading bug - to fix in the future')
 
   // Convert H3 to Quote
   await page.keyboard.press('Backspace')

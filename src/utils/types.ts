@@ -45,30 +45,36 @@ export const availableBlockTypes = [
     icon: 'bi-text-left',
     label: 'Text',
     blockType: BlockType.Text,
+    canSplit: true,
   }, {
     type: 'Turn into',
     icon: 'bi-type-h1',
     label: 'Heading 1',
     blockType: BlockType.H1,
+    canSplit: true,
   }, {
     type: 'Turn into',
     icon: 'bi-type-h2',
     label: 'Heading 2',
     blockType: BlockType.H2,
+    canSplit: true,
   }, {
     type: 'Turn into',
     icon: 'bi-type-h3',
     label: 'Heading 3',
     blockType: BlockType.H3,
+    canSplit: true,
   }, {
     type: 'Turn into',
     icon: 'bi-hr',
     label: 'Divider',
     blockType: BlockType.Divider,
+    canSplit: false,
   }, {
     type: 'Turn into',
     icon: 'bi-quote',
     label: 'Quote',
     blockType: BlockType.Quote,
+    canSplit: true,
   },
-] as { type:string, icon:string, label:string, blockType:BlockType|string}[]
+] as { type:string, icon:string, label:string, blockType:BlockType|string, canSplit:boolean }[]
