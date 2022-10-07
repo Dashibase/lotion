@@ -1,7 +1,7 @@
 <template>
   <Editor v-if="!props.readonly" v-model="props.block.details.value"
     class="py-1.5" />
-  <div v-else v-html="markdownToHtml(props.block.details.value)"
+  <div v-else v-html="markdownToHtml(props.block.details.value as string)"
     class="py-1.5"></div>
 </template>
 
