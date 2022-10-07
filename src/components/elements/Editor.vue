@@ -14,6 +14,7 @@ import Bold from '@tiptap/extension-bold'
 import Italic from '@tiptap/extension-italic'
 import History from '@tiptap/extension-history'
 import Placeholder from '@tiptap/extension-placeholder'
+import Link from '@tiptap/extension-link'
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import { markdownToHtml, htmlToMarkdown } from '@/utils/utils'
 
@@ -48,6 +49,7 @@ const editor = useEditor({
     Bold,
     Italic,
     History,
+    Link,
     Placeholder.configure({
       placeholder: 'Type \'/\' for a menu'
     })
