@@ -72,3 +72,16 @@ export const availableBlockTypes = [
     blockType: BlockType.Quote,
   },
 ] as { type:string, icon:string, label:string, blockType:BlockType|string}[]
+
+export interface LotionProps {
+	page: {
+		name: string;
+		blocks: Block[];
+	};
+	readonly: boolean;
+}
+export interface BlockComponentProps {
+  block: Block;
+  blockTypes: null|(string|BlockType)[];
+	readonly: boolean;
+}

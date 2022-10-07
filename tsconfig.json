@@ -18,6 +18,7 @@
     "declaration": true,
     "declarationDir": "./types"
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "tests/unit/*.ts", "tests/compnents/*.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "tests/unit/*.ts", "tests/components/*.ts", "src/stories/*.stories.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "baseUrl": ".",
 }
