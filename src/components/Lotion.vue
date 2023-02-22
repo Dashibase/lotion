@@ -1,5 +1,5 @@
 <template>
-  <div class="lotion w-[65ch] mx-auto my-24 font-sans text-base" v-if="props.page" ref="editor">
+  <div class="lotion w-[75ch] mx-auto my-24 font-sans text-base" v-if="props.page" ref="editor">
     <h1 id="title" ref="title" :contenteditable="!props.readonly" spellcheck="false" data-ph="Untitled"
       @keydown.enter.prevent="splitTitle"
       @keydown.down="blockElements[0]?.moveToFirstLine(); scrollIntoView();"
@@ -9,7 +9,7 @@
       {{ props.page.name || '' }}
     </h1>
     <draggable id="blocks" tag="div" :list="props.page.blocks"  handle=".handle"
-      v-bind="dragOptions" class="-ml-24 space-y-2 pb-4">
+      v-bind="dragOptions" class="space-y-2 pb-4">
       <transition-group type="transition">
         <BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i" :id="'block-'+block.id"
           :blockTypes="props.blockTypes"
@@ -175,10 +175,10 @@ function handleMoveToPrevLine (blockIdx:number) {
   scrollIntoView()
 }
 
-function insertBlock (blockIdx: number) {
+function insertBlock (blockIdx: number, type = BlockType.Text) {
   const newBlock = {
     id: uuidv4(),
-    type: BlockType.Text,
+    type,
     details: {
       value: '',
     },
@@ -280,7 +280,8 @@ function mergeTitle (blockIdx:number = 0) {
 
 function split (blockIdx: number) {
   const caretPos = blockElements.value[blockIdx].getCaretPos()
-  insertBlock(blockIdx)
+  const currentBlockType = props.page.blocks[blockIdx].type
+  insertBlock(blockIdx, currentBlockType)
   const blockTypeDetails = availableBlockTypes.find(blockType => blockType.blockType === props.page.blocks[blockIdx].type)
   if (!blockTypeDetails) return
   if (blockTypeDetails.canSplit) {

@@ -1,37 +1,48 @@
 <template>
-  <div class="group flex w-full rounded"
+  <div
     :class="{
       // Add top margin for headings
       'pt-12 first:pt-0': block.type === BlockType.H1,
       'pt-4 first:pt-0': block.type === BlockType.H2,
-    }">
-    <div class="h-full pl-4 pr-2 text-center cursor-pointer transition-all duration-150 text-neutral-300 flex"
-      :class="{
-        'invisible': props.readonly,
-        'py-3.5': block.type === BlockType.H1,
-        'py-3': block.type === BlockType.H2,
-        'py-2.5': block.type === BlockType.H3,
-        'py-1.5': ![BlockType.H1, BlockType.H2, BlockType.H3].includes(block.type),
-      }">
-      <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to delete block</span>">
-        <v-icon name="hi-trash" @click="emit('deleteBlock')"
-          class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
-      </Tooltip>
-      <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to add block below</span>">
-        <v-icon name="hi-plus" @click="emit('newBlock')"
-          class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
-      </Tooltip>
-      <BlockMenu ref="menu"
-        @setBlockType="setBlockType"
-        :blockTypes="props.block.details.blockTypes || props.blockTypes"
+      'list-item ml-5 list-disc': block.type === BlockType.UnorderedList,
+      'list-item ml-5 list-decimal': block.type === BlockType.OrderedList,
+    }"
+  >
+    <div class="group relative w-full rounded mr-32">
+      <div
+        class="h-full absolute min-h-[2rem] top-1/2 pl-4 pr-2 text-center cursor-pointer transition-opacity duration-150 text-neutral-300 z-10 flex -translate-y-1/2"
+        :class="[
+          [BlockType.OrderedList, BlockType.UnorderedList].includes(block.type) ? '-left-[7.25rem]' : '-left-24',
+          {
+            'invisible': props.readonly,
+            'py-3.5': block.type === BlockType.H1,
+            'py-3': block.type === BlockType.H2,
+            'py-2.5': block.type === BlockType.H3,
+            'py-1.5': ![BlockType.H1, BlockType.H2, BlockType.H3].includes(block.type),
+          }
+        ]"
+      >
+        <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to delete block</span>">
+          <v-icon name="hi-trash" @click="emit('deleteBlock')"
+            class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
+        </Tooltip>
+        <Tooltip value="<span class='text-neutral-400'><span class='text-white'>Click</span> to add block below</span>">
+          <v-icon name="hi-plus" @click="emit('newBlock')"
+            class="w-6 h-6 hover:bg-neutral-100 hover:text-neutral-400 p-0.5 rounded group-hover:opacity-100 opacity-0" />
+        </Tooltip>
+        <BlockMenu ref="menu"
+          @setBlockType="setBlockType"
+          :blockTypes="props.block.details.blockTypes || props.blockTypes"
         />
-    </div>
-    <div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
-      <!-- Actual content -->
-      <component :is="BlockComponents[props.block.type]" ref="content"
-        :block="block" :readonly="props.readonly"
-        @keydown="keyDownHandler"
-        @keyup="parseMarkdown" />
+      </div>
+      <div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
+        <!-- Actual content -->
+        <component :is="BlockComponents[props.block.type]" ref="content"
+          :block="block" :readonly="props.readonly"
+          @keydown="keyDownHandler"
+          @keyup="parseMarkdown"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -155,7 +166,11 @@ function keyDownHandler (event:KeyboardEvent) {
     const selection = window.getSelection()
     if (!(menu.value && menu.value.open) && atFirstChar() && selection && selection.anchorOffset === 0 && !props.readonly) {
       event.preventDefault()
-      emit('merge')
+      if (props.block.type === BlockType.UnorderedList || props.block.type === BlockType.OrderedList) {
+        setBlockType(BlockType.Text, 0)
+      } else {
+        emit('merge')
+      }
     }
   } else if (event.key === 'Enter') {
     event.preventDefault()
@@ -166,7 +181,7 @@ function keyDownHandler (event:KeyboardEvent) {
 }
 
 function isContentBlock () {
-  return [BlockType.Text, BlockType.Quote, BlockType.H1, BlockType.H2, BlockType.H3].includes(props.block.type)
+  return [BlockType.Text, BlockType.Quote, BlockType.H1, BlockType.H2, BlockType.H3, BlockType.OrderedList, BlockType.UnorderedList].includes(props.block.type)
 }
 
 const content = ref<any>(null)
@@ -379,7 +394,7 @@ function getCaretPosWithoutTags () {
 function setCaretPos (caretPos:number) {
   const innerContent = getInnerContent()
   if (innerContent) {
-  if (isTextBlock(props.block.type)) {
+    if (isTextBlock(props.block.type)) {
       let offsetNode, offset = 0
       const numNodes = (content.value as any).$el.firstChild.firstChild.childNodes.length
       for (const [i, node] of (content.value as any).$el.firstChild.firstChild.childNodes.entries()) {
@@ -439,12 +454,14 @@ function parseMarkdown (event:KeyboardEvent) {
   const textContent = getTextContent()
   if(!textContent) return
 
-  const markdownRegexpMap = {
+  const markdownRegexpMap: Record<string, RegExp> = {
+    [BlockType.OrderedList]: /^1.\s(.*)$/,
+    [BlockType.UnorderedList]: /^-\s(.*)$/,
     [BlockType.H1]: /^#\s(.*)$/,
     [BlockType.H2]: /^##\s(.*)$/,
     [BlockType.H3]: /^###\s(.*)$/,
     [BlockType.Quote]: /^>\s(.*)$/,
-    [BlockType.Divider]: /^---\s$/
+    [BlockType.Divider]: /^---\s$/,
   }
 
   const handleMarkdownContent = (blockType: keyof typeof markdownRegexpMap) => {
@@ -457,18 +474,14 @@ function parseMarkdown (event:KeyboardEvent) {
     })
   }
 
+  const blockTypes = [BlockType.OrderedList, BlockType.UnorderedList, BlockType.H1, BlockType.H2, BlockType.H3, BlockType.Quote, BlockType.Divider]
+  const matchedBlockType = blockTypes.find((type) => textContent.match(markdownRegexpMap[type]))
 
-  if (textContent.match(markdownRegexpMap[BlockType.H1]) && event.key === ' ') {
-    handleMarkdownContent(BlockType.H1)
-  } else if (textContent.match(markdownRegexpMap[BlockType.H2]) && event.key === ' ') {
-    handleMarkdownContent(BlockType.H2)
-  } else if (textContent.match(markdownRegexpMap[BlockType.H3]) && event.key === ' ') {
-    handleMarkdownContent(BlockType.H3)
-  } else if (textContent.match(markdownRegexpMap[BlockType.Quote]) && event.key === ' ') {
-    handleMarkdownContent(BlockType.Quote)
-  } else if (textContent.match(markdownRegexpMap[BlockType.Divider]) && event.key === ' ') {
-    handleMarkdownContent(BlockType.Divider)
-    props.block.details.value = ''
+  if (matchedBlockType && event.key === ' ') {
+    handleMarkdownContent(matchedBlockType)
+    if (matchedBlockType === BlockType.Divider) {
+      props.block.details.value = ''
+    }
   } else if (event.key === '/') {
     if (menu.value && !menu.value.open) {
       menu.value.open = true

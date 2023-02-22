@@ -39,6 +39,12 @@ export async function isBlockType (locator: Locator, type: BlockType) {
       let isQuote2 = await locator.locator('..').locator('..').evaluate(((el) => el.classList.contains('border-black')))
       result = isTextType2 && isQuote2
       break
+    case BlockType.OrderedList:
+      result = await locator.evaluate((el) => el.classList.contains('list-decimal'))
+      break
+    case BlockType.UnorderedList:
+      result = await locator.evaluate((el) => el.classList.contains('list-disc'))
+      break
   }
   return result
 }

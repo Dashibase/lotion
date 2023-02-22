@@ -4,5 +4,7 @@ export enum BlockType {
   H2 = 'H2',
   H3 = 'H3',
   Divider = 'DIVIDER',
-  Quote = 'QUOTE'
+  Quote = 'QUOTE',
+  UnorderedList = 'UNORDERED_LIST',
+  OrderedList = 'ORDERED_LIST',
 }

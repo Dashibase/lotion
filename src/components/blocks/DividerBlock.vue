@@ -1,13 +1,12 @@
 <template>
-  <div class="w-full py-0 h-[1px] bg-neutral-300 mt-[1.2rem]">
-  </div>
+  <div class="w-full py-0 h-[1px] bg-neutral-300 mt-5"></div>
 </template>
 
 <script setup lang="ts">
 import { PropType } from 'vue'
 import { Block } from '@/utils/types'
 
-const props = defineProps({
+defineProps({
   block: {
     type: Object as PropType<Block>,
     required: true,
