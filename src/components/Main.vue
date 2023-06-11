@@ -50,43 +50,43 @@ const page = ref({
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '1. Hover on the left of each line for quick actions'
+      value: 'Hover on the left of each line for quick actions'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '2. Click on the + button to add a new line'
+      value: 'Click on the + button to add a new line'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '3. Drag the ⋮⋮ button to reorder'
+      value: 'Drag the ⋮⋮ button to reorder'
     },
   }, {
     id: uuidv4(),
     type: BlockType.Text,
     details: {
-      value: '4. Click the trash icon to delete this block'
+      value: 'Click the trash icon to delete this block'
     },
   }, {
     id: uuidv4(),
-    type: BlockType.Text,
+    type: BlockType.OrderedList,
     details: {
-      value: '5. **Bold** and *italicize* using markdown e.g. \\*\\*bold\\*\\* and \\*italics\\*'
+      value: '**Bold** and *italicize* using markdown e.\\*\\*bold\\*\\* and \\*italics\\*'
     },
   }, {
     id: uuidv4(),
-    type: BlockType.Text,
+    type: BlockType.OrderedList,
     details: {
-      value: '6. Add headers and dividers with \'#\', \'##\' or \'---\' followed by a space'
+      value: 'Add headers and dividers with \'#\', \'##\' or \'---\' followed by a space'
     },
   }, {
     id: uuidv4(),
-    type: BlockType.Text,
+    type: BlockType.OrderedList,
     details: {
-      value: '7. Type \'/\' for a menu to quickly switch blocks and search by typing'
+      value: 'Type \'/\' for a menu to quickly switch blocks and search by typing'
     },
   },]
 })

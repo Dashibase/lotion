@@ -307,6 +307,54 @@ describe('Block.vue', () => {
     })
   })
 
+  it("should change to Ordered List on 1.", async () => {
+    const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
+      props: {
+        block: {
+          type: BlockType.Text,
+          details: {
+            value: '<p>1. Test</p>',
+          },
+        } as Block,
+      },
+    })
+    await new Promise<void>(r => {
+      setTimeout(async () => {
+        wrapper.vm.moveToEnd()
+        elementKeyup(wrapper.vm.content.$el, ' ')
+        expect(wrapper.emitted().setBlockType[0]).toEqual(['ORDERED_LIST'])
+        r()
+      }, 100)
+    })
+  })
+
+  it("should change to Unordered List on -", async () => {
+    const wrapper = mount(BlockComponent, {
+      global: {
+        stubs: ['v-icon'],
+      },
+      props: {
+        block: {
+          type: BlockType.Text,
+          details: {
+            value: '<p>- Test</p>',
+          },
+        } as Block,
+      },
+    })
+    await new Promise<void>(r => {
+      setTimeout(async () => {
+        wrapper.vm.moveToEnd()
+        elementKeyup(wrapper.vm.content.$el, ' ')
+        expect(wrapper.emitted().setBlockType[0]).toEqual(['UNORDERED_LIST'])
+        r()
+      }, 100)
+    })
+  })
+
   it("should render default blockType and content without props", async () => {
     const wrapper = mount(BlockComponent, {
       global: {

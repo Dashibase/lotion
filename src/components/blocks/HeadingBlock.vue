@@ -14,7 +14,7 @@
 import { ref, PropType } from 'vue'
 import { Block, BlockType } from '@/utils/types'
 
-const headingConfig = {
+const headingConfig: Record<string, { placeholder: string, class: string } | null> = {
   [BlockType.H1]: {
     placeholder: 'Heading 1',
     class: 'text-4xl font-semibold',

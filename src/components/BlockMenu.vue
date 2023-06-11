@@ -9,7 +9,7 @@
     </div>
     <div v-show="open" class="block-menu">
       <div ref="menu"
-        class="w-[10rem] lg:w-[12rem] xl:w-[16rem] absolute z-10 shadow-block rounded py-1 text-neutral-700 text-sm right-full bg-white max-h-[24rem] overflow-auto focus-visible:outline-none top-0">
+        class="w-[10rem] lg:w-[12rem] xl:w-[16rem] absolute z-20 shadow-block rounded py-1 text-neutral-700 text-sm right-full bg-white max-h-[24rem] overflow-auto focus-visible:outline-none top-0">
         <div class="text-left divide-y">
           <!-- Search term -->
           <div v-if="searchTerm" class="block-menu-search px-2 py-2 flex gap-2 w-full">
@@ -20,7 +20,10 @@
           </div>
           <!-- Turn into another block like Text, Heading or Divider -->
           <div class="px-2 py-2" v-if="options.filter(option => option.type === 'Turn into').length">
-            <div class="px-2 pb-2 font-semibold uppercase text-xs text-neutral-400">Turn into</div>
+            <div class="flex justify-between px-2 pb-2 text-xs">
+              <div class="font-semibold uppercase text-neutral-500">Turn into</div>
+              <div class="text-neutral-300">Esc to Close</div>
+            </div>
             <div v-for="option, i in options.filter(option => option.type === 'Turn into')"
               class="px-2 py-1 rounded flex items-center gap-2"
               :class="[active === (i + options.filter(option => option.type !== 'Turn into').length) ? 'bg-neutral-100' : '']"
