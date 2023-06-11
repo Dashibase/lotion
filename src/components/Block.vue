@@ -4,15 +4,12 @@
       // Add top margin for headings
       'pt-12 first:pt-0': block.type === BlockType.H1,
       'pt-4 first:pt-0': block.type === BlockType.H2,
-      'list-item ml-5 list-disc': block.type === BlockType.UnorderedList,
-      'list-item ml-5 list-decimal': block.type === BlockType.OrderedList,
     }"
   >
     <div class="group relative w-full rounded mr-32">
       <div
-        class="h-full absolute min-h-[2rem] top-1/2 pl-4 pr-2 text-center cursor-pointer transition-opacity duration-150 text-neutral-300 z-10 flex -translate-y-1/2"
+        class="h-full absolute min-h-[2rem] top-1/2 pl-4 pr-2 text-center cursor-pointer transition-opacity duration-150 text-neutral-300 z-10 flex -translate-y-1/2 -left-24"
         :class="[
-          [BlockType.OrderedList, BlockType.UnorderedList].includes(block.type) ? '-left-[7.25rem]' : '-left-24',
           {
             'invisible': props.readonly,
             'py-3.5': block.type === BlockType.H1,
@@ -35,8 +32,17 @@
           :blockTypes="props.block.details.blockTypes || props.blockTypes"
         />
       </div>
-      <div class="w-full relative" :class="{ 'px-0': block.type !== BlockType.Divider }">
-        <!-- Actual content -->
+      <div
+        class="w-full relative list-marker"
+        :data-index="listIndex"
+        :class="{
+          'px-0': block.type !== BlockType.Divider,
+          'pl-9': [BlockType.UnorderedList, BlockType.OrderedList].includes(block.type),
+          'ordered-list': block.type === BlockType.OrderedList,
+          'unordered-list': block.type === BlockType.UnorderedList,
+        }"
+      >
+      <!-- Actual content -->
         <component :is="BlockComponents[props.block.type]" ref="content"
           :block="block" :readonly="props.readonly"
           @keydown="keyDownHandler"
@@ -71,6 +77,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  listIndex: {
+    type: Number,
+    default: null
+  }
 })
 
 const emit = defineEmits([

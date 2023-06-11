@@ -8,7 +8,6 @@ export interface Block {
   id: string,
   type: BlockType;
   details: Details;
-  children?: Block[];
 }
 
 export enum BlockType {

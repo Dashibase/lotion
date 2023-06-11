@@ -11,10 +11,15 @@
     <draggable id="blocks" tag="div" :list="props.page.blocks"  handle=".handle"
       v-bind="dragOptions" class="space-y-2 pb-4">
       <transition-group type="transition">
-        <BlockComponent :block="block" v-for="block, i in props.page.blocks" :key="i" :id="'block-'+block.id"
+        <BlockComponent
+          v-for="block, i in props.page.blocks"
+          :key="block.id"
+          :id="'block-'+block.id"
+          :block="block"
           :blockTypes="props.blockTypes"
           :readonly="props.readonly"
-          :ref="el => blockElements[i] = (el as unknown as typeof Block)"
+          :listIndex="listIndex(i)"
+          :ref="(el: unknown) => blockElements[i] = (el as unknown as typeof Block)"
           @deleteBlock="deleteBlock(i)"
           @newBlock="insertBlock(i)"
           @moveToPrevChar="blockElements[i-1]?.moveToEnd(); scrollIntoView();"
@@ -23,15 +28,15 @@
           @moveToNextLine="blockElements[i+1]?.moveToFirstLine(); scrollIntoView();"
           @merge="merge(i)"
           @split="split(i)"
-          @setBlockType="type => setBlockType(i, type)"
-          />
+          @setBlockType="(type: BlockType) => setBlockType(i, type)"
+        />
       </transition-group>
     </draggable>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUpdate, PropType } from 'vue'
+import { ref, onBeforeUpdate, PropType, computed } from 'vue'
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
 import { v4 as uuidv4 } from 'uuid'
 import { Block, BlockType, isTextBlock, availableBlockTypes } from '@/utils/types'
@@ -304,4 +309,20 @@ function splitTitle () {
   props.page.name = titleString.slice(0, caretPos)
   props.page.blocks[0].details.value = titleString.slice(caretPos)
 }
+
+function listIndex(i: number) {
+  let index = 0
+  let previousBlockType = null
+  for (let j = 0; j <= i; j++) {
+    if (props.page.blocks[j].type !== previousBlockType) {
+      index = 0
+    }
+    previousBlockType = props.page.blocks[j].type
+    if (props.page.blocks[j].type === BlockType.OrderedList) {
+      index++
+    }
+  }
+  return index
+}
+
 </script>

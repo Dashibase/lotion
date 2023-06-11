@@ -41,3 +41,17 @@ pre.lotion-md {
   pointer-events: none;
   height: 0;
 }
+
+.list-marker.ordered-list::before {
+  content: attr(data-index) ".";
+  position: absolute;
+  left: 0;
+  @apply py-1.5 text-neutral-600 left-0 absolute w-7 pr-1 text-right tabular-nums;
+}
+
+.list-marker.unordered-list::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  @apply py-1.5 text-neutral-600 left-0 absolute w-6 text-right tabular-nums;
+}
